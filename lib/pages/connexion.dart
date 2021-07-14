@@ -83,40 +83,20 @@ class ConnexionFormState extends State<ConnexionForm> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Padding(
-                  padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
-                  child: Container(
-                    width: MediaQuery.of(context).size.width * 0.9,
-                    height: 35,
-                    decoration: BoxDecoration(
-                      color: Color(0xFFFD7E14),
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(10, 0, 10, 1),
-                      child: Text(
-                        'Se connecter',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontFamily: 'Poppins',
-                          color: Colors.white,
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
                   padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
                   child: Container(
-                    width: MediaQuery.of(context).size.width * 0.3,
-                    height: MediaQuery.of(context).size.width * 0.3,
+                    padding: EdgeInsets.all(6),
+                    width: MediaQuery.of(context).size.width * 0.4,
+                    height: MediaQuery.of(context).size.width * 0.4,
                     clipBehavior: Clip.antiAlias,
                     decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                    ),
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                            color: Color(0xFFFD7E14),
+                            width: 5,
+                            style: BorderStyle.solid)),
                     child: Image.asset(
-                      'images/person.PNG',
+                      'images/profile.png',
                     ),
                   ),
                 ),

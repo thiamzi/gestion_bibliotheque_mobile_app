@@ -15,14 +15,6 @@ class MonProfile extends StatefulWidget {
 
 class _MonProfileState extends State<MonProfile> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
-  final GlobalKey<ScaffoldMessengerState> sb =
-      GlobalKey<ScaffoldMessengerState>();
-
-  void snackbar() {
-    sb.currentState.showSnackBar(SnackBar(
-      content: Text("done succesfully"),
-    ));
-  }
 
   User upadteUser;
 
@@ -59,7 +51,7 @@ class _MonProfileState extends State<MonProfile> {
                   if (upadteUser != null) {
                     changerMdp(context);
                   } else {
-                    snackbar();
+                    Outils.snackbar(context, "Veuillez patientez...");
                   }
                 }),
           ),
@@ -272,6 +264,8 @@ class PasswordFormState extends State<PasswordForm> {
                         validator: (String value) {
                           if (value.isEmpty || value == null) {
                             return "Champ requis";
+                          } else if (value.length < 7) {
+                            return "Mot de passe trop court";
                           }
                           return null;
                         },
@@ -302,6 +296,7 @@ class PasswordFormState extends State<PasswordForm> {
                         } else if (value.isEmpty || value == null) {
                           return "Champ requis";
                         }
+
                         return null;
                       },
                       decoration: InputDecoration(
@@ -315,31 +310,59 @@ class PasswordFormState extends State<PasswordForm> {
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        if (_formKey.currentState.validate()) {
-                          widget.user.password = controlMdp.text;
-                          AuthService().upadtePassword(widget.user, context);
-                        } else {
-                          // print("jkjk");
-                        }
-                      },
-                      child: Text(
-                        "Valider",
-                        style: TextStyle(
-                            color: Color.fromRGBO(79, 84, 103, 1),
-                            fontWeight: FontWeight.bold),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(30, 10, 0, 0),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            if (_formKey.currentState.validate()) {
+                              widget.user.password = controlMdp.text;
+                              AuthService()
+                                  .upadtePassword(widget.user, context)
+                                  .whenComplete(() {
+                                controlCmdp.text = "";
+                                controlMdp.text = "";
+                              });
+                            } else {}
+                          },
+                          child: Text(
+                            "Valider",
+                            style: TextStyle(
+                                color: Color.fromRGBO(79, 84, 103, 1),
+                                fontWeight: FontWeight.bold),
+                          ),
+                          style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all<Color>(Colors.white),
+                            side: MaterialStateProperty.all(BorderSide(
+                                color: Color.fromRGBO(79, 84, 103, 1))),
+                          ),
+                        ),
                       ),
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(Colors.white),
-                        side: MaterialStateProperty.all(
-                            BorderSide(color: Color.fromRGBO(79, 84, 103, 1))),
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(0, 10, 30, 0),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text(
+                            "Fermer",
+                            style: TextStyle(
+                                color: Color.fromRGBO(79, 84, 103, 1),
+                                fontWeight: FontWeight.bold),
+                          ),
+                          style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all<Color>(Colors.white),
+                            side: MaterialStateProperty.all(BorderSide(
+                                color: Color.fromRGBO(79, 84, 103, 1))),
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
+                    ],
+                  )
                 ],
               )
             ]));

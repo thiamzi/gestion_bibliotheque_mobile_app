@@ -414,7 +414,7 @@ class Outils {
   ////////////////////////////////GESTION ERREUR///////////////////////////////////////////////
 
   static success(String message, context) {
-    Navigator.of(context, rootNavigator: true).pop(Connexion());
+    Navigator.pop(context);
     CoolAlert.show(
       context: context,
       backgroundColor: Color.fromRGBO(79, 84, 103, 1),
@@ -427,41 +427,25 @@ class Outils {
   }
 
   static errur401(context) {
-    Navigator.of(context, rootNavigator: true).pop(Connexion());
+    Navigator.pop(context);
     CoolAlert.show(
       context: context,
       backgroundColor: Color.fromRGBO(79, 84, 103, 1),
       type: CoolAlertType.error,
       title: 'Erreur authentification',
-      text: 'Adresse email ou mot de passe incorrecte',
+      text: 'Email ou mot de passe incorrecte',
       confirmBtnColor: Color.fromRGBO(79, 84, 103, 1),
       loopAnimation: true,
     );
   }
 
-  static errur500(context) {
-    Navigator.of(context, rootNavigator: true).pop(Connexion());
-    CoolAlert.show(
-      context: context,
-      type: CoolAlertType.error,
+  static snackbar(context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       backgroundColor: Color.fromRGBO(79, 84, 103, 1),
-      title: 'Erreur serveur',
-      text: 'Probleme au niveau du serveur. Ressayer plutard',
-      confirmBtnColor: Color.fromRGBO(79, 84, 103, 1),
-      loopAnimation: true,
-    );
+      duration: Duration(seconds: 10),
+      content: Text(message),
+    ));
   }
 
-  static errurNet(context) {
-    Navigator.of(context, rootNavigator: true).pop(Connexion());
-    CoolAlert.show(
-      context: context,
-      type: CoolAlertType.error,
-      backgroundColor: Color.fromRGBO(79, 84, 103, 1),
-      title: 'Erreur connexion',
-      text: 'Veuillez verifier votre connexion',
-      confirmBtnColor: Color.fromRGBO(79, 84, 103, 1),
-      loopAnimation: true,
-    );
-  }
+  int genererNumero() {}
 }

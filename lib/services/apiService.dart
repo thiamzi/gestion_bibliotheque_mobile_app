@@ -22,7 +22,7 @@ class ApiService {
           List<Livre>.from(l.map((model) => Livre.fromJson(model)));
       return livres;
     } else if (response.statusCode == ResponseStatus.RESPONSE_STATUS_500) {
-      return Outils.errur500(context);
+      return Outils.snackbar(context, 'Erreur serveur. Ressayer plutard');
     } else {
       throw Exception('Unexpected error occured!');
     }
@@ -34,7 +34,7 @@ class ApiService {
       Map data = jsonDecode(response.body);
       return Livre.fromJson(data);
     } else if (response.statusCode == ResponseStatus.RESPONSE_STATUS_500) {
-      return Outils.errur500(context);
+      return Outils.snackbar(context, 'Erreur serveur. Ressayer plutard');
     } else {
       throw Exception('Unexpected error occured!');
     }
@@ -55,7 +55,7 @@ class ApiService {
 
       return categories;
     } else if (response.statusCode == ResponseStatus.RESPONSE_STATUS_500) {
-      return Outils.errur500(context);
+      return Outils.snackbar(context, 'Erreur serveur. Ressayer plutard');
     } else {
       throw Exception('Unexpected error occured!');
     }
@@ -68,7 +68,7 @@ class ApiService {
       Map data = jsonDecode(response.body);
       return Categorie.fromJson(data);
     } else if (response.statusCode == ResponseStatus.RESPONSE_STATUS_500) {
-      return Outils.errur500(context);
+      return Outils.snackbar(context, 'Erreur serveur. Ressayer plutard');
     } else {
       throw Exception('Unexpected error occured!');
     }
@@ -83,7 +83,7 @@ class ApiService {
       Map data = jsonDecode(response.body);
       return Etudiant.fromJson(data);
     } else if (response.statusCode == ResponseStatus.RESPONSE_STATUS_500) {
-      return Outils.errur500(context);
+      return Outils.snackbar(context, 'Erreur serveur. Ressayer plutard');
     } else {
       throw Exception('Unexpected error occured!');
     }
@@ -108,7 +108,7 @@ class ApiService {
         return reservationEnCours;
       }
     } else if (response.statusCode == ResponseStatus.RESPONSE_STATUS_500) {
-      return Outils.errur500(context);
+      return Outils.snackbar(context, 'Erreur serveur. Ressayer plutard');
     } else {
       throw Exception('Unexpected error occured!');
     }
@@ -121,7 +121,7 @@ class ApiService {
       Map data = jsonDecode(response.body);
       return Reservation.fromJson(data);
     } else if (response.statusCode == ResponseStatus.RESPONSE_STATUS_500) {
-      return Outils.errur500(context);
+      return Outils.snackbar(context, 'Erreur serveur. Ressayer plutard');
     } else {
       throw Exception('Unexpected error occured!');
     }
@@ -148,7 +148,7 @@ class ApiService {
         return reservationList;
       }
     } else if (response.statusCode == ResponseStatus.RESPONSE_STATUS_500) {
-      return Outils.errur500(context);
+      return Outils.snackbar(context, 'Erreur serveur. Ressayer plutard');
     } else {
       throw Exception('Unexpected error occured!');
     }
@@ -174,20 +174,7 @@ class ApiService {
         return empruntEnCours;
       }
     } else if (response.statusCode == ResponseStatus.RESPONSE_STATUS_500) {
-      return Outils.errur500(context);
-    } else {
-      throw Exception('Unexpected error occured!');
-    }
-  }
-
-  Future<Emprunt> getOneEmprunt(int numero, context) async {
-    http.Response response =
-        await http.get(Uri.parse(_url + "oneemprunt/$numero"));
-    if (response.statusCode == ResponseStatus.RESPONSE_STATUS_200) {
-      Map data = jsonDecode(response.body);
-      return Emprunt.fromJson(data);
-    } else if (response.statusCode == ResponseStatus.RESPONSE_STATUS_500) {
-      return Outils.errur500(context);
+      return Outils.snackbar(context, 'Erreur serveur. Ressayer plutard');
     } else {
       throw Exception('Unexpected error occured!');
     }
@@ -214,9 +201,26 @@ class ApiService {
         return empruntList;
       }
     } else if (response.statusCode == ResponseStatus.RESPONSE_STATUS_500) {
-      return Outils.errur500(context);
+      return Outils.snackbar(context, 'Erreur serveur. Ressayer plutard');
     } else {
       throw Exception('Unexpected error occured!');
     }
   }
+
+///////////////////////////////////EMPRUNT SERVICE //////////////////////////////////////////////
+
+  Future<Emprunt> getOneEmprunt(int numero, context) async {
+    http.Response response =
+        await http.get(Uri.parse(_url + "oneemprunt/$numero"));
+    if (response.statusCode == ResponseStatus.RESPONSE_STATUS_200) {
+      Map data = jsonDecode(response.body);
+      return Emprunt.fromJson(data);
+    } else if (response.statusCode == ResponseStatus.RESPONSE_STATUS_500) {
+      return Outils.snackbar(context, 'Erreur serveur. Ressayer plutard');
+    } else {
+      throw Exception('Unexpected error occured!');
+    }
+  }
+
+  Future<Emprunt> emprunter(Emprunt emprunt) {}
 }

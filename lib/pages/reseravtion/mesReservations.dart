@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gestion_bibliotheque/modeles/emprunt.dart';
 import 'package:gestion_bibliotheque/modeles/etudiant.dart';
 import 'package:gestion_bibliotheque/modeles/livre.dart';
 import 'package:gestion_bibliotheque/modeles/reservation.dart';
@@ -179,9 +180,25 @@ class _MesReservationsState extends State<MesReservations> {
                                                       child: ElevatedButton(
                                                         onPressed: () {
                                                           Outils.info(
-                                                              context,
-                                                              "Etes vous sur vouloir emprunter ?",
-                                                              () => null);
+                                                            context,
+                                                            "Etes vous sur vouloir emprunter ?",
+                                                            () => null,
+                                                            // ApiService().emprunter(
+                                                            //   new Emprunt(
+                                                            //     Outils().genererNumero(),
+                                                            //     DateTime.now()
+                                                            //         .toString(),
+                                                            //     _delai_recup,
+                                                            //     _dateFin,
+                                                            //     false,
+                                                            //     false,
+                                                            //     etudiant.data
+                                                            //         .userIduser,
+                                                            //     livre.data
+                                                            //         .idlivre,
+                                                            //     null,
+                                                            //     false))
+                                                          );
                                                         },
                                                         child: Text(
                                                           "Emprunter",

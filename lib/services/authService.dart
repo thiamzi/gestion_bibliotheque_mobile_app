@@ -27,11 +27,14 @@ class AuthService {
 
     if (response.statusCode == ResponseStatus.RESPONSE_STATUS_200) {
       Map<String, dynamic> payload = Jwt.parseJwt(response.body);
+      if (Userdetails.fromJson(payload).isEtudiant == null) {
+        return Outils.errur401(context);
+      }
       return Userdetails.fromJson(payload);
     } else if (response.statusCode == ResponseStatus.RESPONSE_STATUS_401) {
       return Outils.errur401(context);
     } else if (response.statusCode == ResponseStatus.RESPONSE_STATUS_500) {
-      return Outils.errur500(context);
+      return Outils.snackbar(context, 'Erreur serveur. Ressayer plutard');
     } else {
       throw Exception("erreur");
     }
@@ -78,7 +81,7 @@ class AuthService {
       Map data = jsonDecode(response.body);
       return User.fromJson(data);
     } else if (response.statusCode == ResponseStatus.RESPONSE_STATUS_500) {
-      return Outils.errur500(context);
+      return Outils.snackbar(context, 'Erreur serveur. Ressayer plutard');
     } else {
       throw Exception('Unexpected error occured!');
     }
@@ -98,15 +101,18 @@ class AuthService {
 
   Future<User> upadtePassword(User user, context) async {
     Outils.loading(context);
-    http.Response response = await http.post(
+    http.Response response = await http.put(
       _url + "updatepassword",
-      body: user.toJson(),
+      body: jsonEncode(user.toJson()),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
     );
 
     if (response.statusCode == ResponseStatus.RESPONSE_STATUS_200) {
       return Outils.success("Mot de passe modifie avec succes", context);
     } else if (response.statusCode == ResponseStatus.RESPONSE_STATUS_500) {
-      return Outils.errur500(context);
+      return Outils.snackbar(context, 'Erreur serveur. Ressayer plutard');
     } else {
       throw Exception("erreur");
     }
