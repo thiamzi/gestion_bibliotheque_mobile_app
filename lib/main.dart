@@ -33,10 +33,10 @@ class MyApp extends StatelessWidget {
       initialRoute: "/",
       routes: {
         "/": (context) {
-          return Connexion();
-        },
-        "/accueil": (context) {
           return Acceuil();
+        },
+        "/connexion": (context) {
+          return Connexion();
         },
         "/monprofile": (context) {
           return MonProfile();

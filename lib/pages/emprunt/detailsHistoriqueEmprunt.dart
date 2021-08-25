@@ -30,7 +30,7 @@ class _DetailsHistoriqueEmpruntState extends State<DetailsHistoriqueEmprunt> {
       key: scaffoldKey,
       resizeToAvoidBottomInset: false,
       backgroundColor: Color(0xFFF8F9FA),
-      appBar: Outils.buildAppBar(Outils().buildAppBarBottom("Details emprunt")),
+      appBar: Outils.buildAppBar(Outils.buildAppBarBottom("Details emprunt")),
       body: FutureBuilder<Emprunt>(
           future: ApiService().getOneEmprunt(numeroEmprunt, context),
           builder: (context, emprunt) {

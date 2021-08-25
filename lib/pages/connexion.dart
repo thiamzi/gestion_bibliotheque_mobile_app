@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:gestion_bibliotheque/services/authService.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class Connexion extends StatefulWidget {
   Connexion({Key key, this.title}) : super(key: key);
@@ -17,17 +16,6 @@ class _ConnexiontState extends State<Connexion> {
   @override
   void initState() {
     super.initState();
-    _loadUserInfo();
-  }
-
-  _loadUserInfo() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String sub = (prefs.getString('sub') ?? "");
-    if (sub == "") {
-    } else {
-      Navigator.pushNamedAndRemoveUntil(
-          context, '/accueil', ModalRoute.withName('/accueil'));
-    }
   }
 
   @override
@@ -70,7 +58,7 @@ class ConnexionFormState extends State<ConnexionForm> {
     return Form(
         key: _formKey,
         child: Container(
-          margin: EdgeInsets.fromLTRB(30, 30, 30, 30),
+          padding: EdgeInsets.fromLTRB(30, 30, 30, 30),
           decoration: BoxDecoration(
             color: Color.fromRGBO(79, 84, 103, 1),
             borderRadius: BorderRadius.circular(10),
@@ -83,17 +71,41 @@ class ConnexionFormState extends State<ConnexionForm> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Padding(
+                  padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
+                  child: Container(
+                    width: MediaQuery.of(context).size.width * 0.9,
+                    height: 35,
+                    decoration: BoxDecoration(
+                      color: Color.fromRGBO(255, 145, 77, 1),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(10, 0, 10, 1),
+                      child: Text(
+                        'Bienvenue',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          color: Colors.white,
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
                   padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
                   child: Container(
                     padding: EdgeInsets.all(6),
-                    width: MediaQuery.of(context).size.width * 0.4,
-                    height: MediaQuery.of(context).size.width * 0.4,
+                    width: MediaQuery.of(context).size.width * 0.35,
+                    height: MediaQuery.of(context).size.width * 0.35,
                     clipBehavior: Clip.antiAlias,
                     decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
-                            color: Color(0xFFFD7E14),
-                            width: 5,
+                            color: Color.fromRGBO(255, 145, 77, 1),
+                            width: 7,
                             style: BorderStyle.solid)),
                     child: Image.asset(
                       'images/profile.png',

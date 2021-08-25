@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/widgets.dart';
 import 'package:gestion_bibliotheque/Const/responseStatus.dart';
 import 'package:gestion_bibliotheque/modeles/categorie.dart';
 import 'package:gestion_bibliotheque/modeles/emprunt.dart';
@@ -114,19 +115,6 @@ class ApiService {
     }
   }
 
-  Future<Reservation> getOneReservation(int id, context) async {
-    http.Response response =
-        await http.get(Uri.parse(_url + "onereservation/$id"));
-    if (response.statusCode == ResponseStatus.RESPONSE_STATUS_200) {
-      Map data = jsonDecode(response.body);
-      return Reservation.fromJson(data);
-    } else if (response.statusCode == ResponseStatus.RESPONSE_STATUS_500) {
-      return Outils.snackbar(context, 'Erreur serveur. Ressayer plutard');
-    } else {
-      throw Exception('Unexpected error occured!');
-    }
-  }
-
   Future<List<Reservation>> getEtudiantReservationsList(int id, context) async {
     List<Reservation> reservationList = [];
     http.Response response =
@@ -168,8 +156,7 @@ class ApiService {
         }
       }
       if (empruntEnCours == null) {
-        return new Emprunt(0, "_dateDebut", "_delaiRecup", "_dateFin", false,
-            false, 0, 0, "_dateremise", false);
+        return new Emprunt(0, null, null, null, false, false, 0, 0);
       } else {
         return empruntEnCours;
       }
@@ -194,8 +181,7 @@ class ApiService {
         }
       }
       if (empruntList.length == 0) {
-        empruntList.add(new Emprunt(0, "_dateDebut", "_delaiRecup", "_dateFin",
-            false, false, 0, 0, "_dateremise", false));
+        empruntList.add(new Emprunt(0, null, null, null, false, false, 0, 0));
         return empruntList;
       } else {
         return empruntList;
@@ -222,5 +208,99 @@ class ApiService {
     }
   }
 
-  Future<Emprunt> emprunter(Emprunt emprunt) {}
+  Future<Emprunt> emprunter(context, Emprunt emprunt) async {
+    Navigator.pop(context);
+    Outils.loading(context);
+    http.Response response = await http.post(
+      _url + "addemprunt",
+      body: jsonEncode(emprunt.toJson()),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == ResponseStatus.RESPONSE_STATUS_200) {
+      return Outils.snackbar(context, "Livre emprunté avec succes");
+    } else if (response.statusCode == ResponseStatus.RESPONSE_STATUS_500) {
+      return Outils.snackbar(context, 'Erreur serveur. Ressayer plutard');
+    } else {
+      throw Exception("erreur");
+    }
+  }
+
+  Future annulerEmprunt(context, int numero) async {
+    Navigator.pop(context);
+    Outils.loading(context);
+    http.Response response = await http.delete(
+      _url + "deleteemprunt/$numero",
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == ResponseStatus.RESPONSE_STATUS_200) {
+      return Outils.snackbar(
+        context,
+        "Emprunt annulé avec succes",
+      );
+    } else if (response.statusCode == ResponseStatus.RESPONSE_STATUS_500) {
+      return Outils.snackbar(context, 'Erreur serveur. Ressayer plutard');
+    } else {
+      throw Exception("erreur");
+    }
+  }
+
+///////////////////////////////////RESERVATION SERVICE //////////////////////////////////////////////
+
+  Future<Reservation> getOneReservation(int id, context) async {
+    http.Response response =
+        await http.get(Uri.parse(_url + "onereservation/$id"));
+    if (response.statusCode == ResponseStatus.RESPONSE_STATUS_200) {
+      Map data = jsonDecode(response.body);
+      return Reservation.fromJson(data);
+    } else if (response.statusCode == ResponseStatus.RESPONSE_STATUS_500) {
+      return Outils.snackbar(context, 'Erreur serveur. Ressayer plutard');
+    } else {
+      throw Exception('Unexpected error occured!');
+    }
+  }
+
+  Future<Reservation> reserver(context, Reservation reservation) async {
+    Navigator.pop(context);
+    Outils.loading(context);
+    http.Response response = await http.post(
+      _url + "addreservation",
+      body: jsonEncode(reservation.toJson()),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == ResponseStatus.RESPONSE_STATUS_200) {
+      return Outils.snackbar(context, "Livre reservé avec succes");
+    } else if (response.statusCode == ResponseStatus.RESPONSE_STATUS_500) {
+      return Outils.snackbar(context, 'Erreur serveur. Ressayer plutard');
+    } else {
+      throw Exception("erreur");
+    }
+  }
+
+  Future annulerReservation(context, int numero) async {
+    Navigator.pop(context);
+    Outils.loading(context);
+    http.Response response = await http.delete(
+      _url + "deletereservation/$numero",
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == ResponseStatus.RESPONSE_STATUS_200) {
+      return Outils.snackbar(context, "Reservation annulée avec succes");
+    } else if (response.statusCode == ResponseStatus.RESPONSE_STATUS_500) {
+      return Outils.snackbar(context, 'Erreur serveur. Ressayer plutard');
+    } else {
+      throw Exception("erreur");
+    }
+  }
 }

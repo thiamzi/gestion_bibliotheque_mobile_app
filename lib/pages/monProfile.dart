@@ -33,13 +33,12 @@ class _MonProfileState extends State<MonProfile> {
 
   @override
   Widget build(BuildContext context) {
-    String email = ModalRoute.of(context).settings.arguments;
     return Scaffold(
         key: scaffoldKey,
         resizeToAvoidBottomInset: false,
         backgroundColor: Color(0xFFF8F9FA),
         appBar: Outils.buildAppBar(
-          Outils().buildAppBarBottom(
+          Outils.buildAppBarBottom(
             "Mon profile",
             IconButton(
                 icon: Icon(
@@ -51,119 +50,120 @@ class _MonProfileState extends State<MonProfile> {
                   if (upadteUser != null) {
                     changerMdp(context);
                   } else {
-                    Outils.snackbar(context, "Veuillez patientez...");
+                    Outils.snackbar(context, "Veuillez patientez...", false);
                   }
                 }),
           ),
         ),
         drawer: Outils.builDrawer(context),
         body: FutureBuilder<User>(
-          future: AuthService().getOneUser(email, context),
-          builder: (context, user) {
-            if (user.hasData) {
-              upadteUser = user.data;
+            future: AuthService().getCurrentUser(context),
+            builder: (context, user) {
               return FutureBuilder<Etudiant>(
                   future:
                       ApiService().getOneEtudiant(user.data.iduser, context),
                   builder: (context, etudiant) {
                     if (etudiant.hasData) {
-                      return Container(
-                        margin: EdgeInsets.fromLTRB(20, 20, 20, 0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Card(
-                              color: Color.fromRGBO(79, 84, 103, 1),
-                              child: Text("Nom",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold)),
-                            ),
-                            ListTile(
-                              minLeadingWidth: 0,
-                              tileColor: Colors.white,
-                              title: Text(
-                                etudiant.data.nom,
+                      upadteUser = user.data;
+                      return ListView(children: [
+                        Container(
+                          margin: EdgeInsets.fromLTRB(20, 20, 20, 0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Card(
+                                color: Color.fromRGBO(79, 84, 103, 1),
+                                child: Text("Nom",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold)),
                               ),
-                            ),
-                            Divider(
-                              height: 10,
-                              color: Color(0xFFF8F9FA),
-                            ),
-                            Card(
-                              color: Color.fromRGBO(79, 84, 103, 1),
-                              child: Text(" Prenom ",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold)),
-                            ),
-                            ListTile(
-                              tileColor: Colors.white,
-                              minLeadingWidth: 0,
-                              title: Text(
-                                etudiant.data.prenom,
+                              ListTile(
+                                minLeadingWidth: 0,
+                                tileColor: Colors.white,
+                                title: Text(
+                                  etudiant.data.nom,
+                                ),
                               ),
-                            ),
-                            Divider(
-                              height: 10,
-                              color: Color(0xFFF8F9FA),
-                            ),
-                            Card(
-                              color: Color.fromRGBO(79, 84, 103, 1),
-                              child: Text(" Numero dossier ",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold)),
-                            ),
-                            ListTile(
-                              minLeadingWidth: 0,
-                              tileColor: Colors.white,
-                              title: Text(
-                                etudiant.data.numeroDossier.toString(),
+                              Divider(
+                                height: 10,
+                                color: Color(0xFFF8F9FA),
                               ),
-                            ),
-                            Divider(
-                              height: 10,
-                              color: Color(0xFFF8F9FA),
-                            ),
-                            Card(
-                              color: Color.fromRGBO(79, 84, 103, 1),
-                              child: Text(" Adresse email ",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold)),
-                            ),
-                            ListTile(
-                              minLeadingWidth: 0,
-                              tileColor: Colors.white,
-                              title: Text(
-                                etudiant.data.user.email,
+                              Card(
+                                color: Color.fromRGBO(79, 84, 103, 1),
+                                child: Text(" Prenom ",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold)),
                               ),
-                            ),
-                            Divider(
-                              height: 10,
-                              color: Color(0xFFF8F9FA),
-                            ),
-                            Card(
-                              color: Color.fromRGBO(79, 84, 103, 1),
-                              child: Text(" Date naissance ",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold)),
-                            ),
-                            ListTile(
-                              minLeadingWidth: 0,
-                              tileColor: Colors.white,
-                              title: Text(
-                                etudiant.data.dateNaissance,
+                              ListTile(
+                                tileColor: Colors.white,
+                                minLeadingWidth: 0,
+                                title: Text(
+                                  etudiant.data.prenom,
+                                ),
                               ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
-                            )
-                          ],
-                        ),
-                      );
+                              Divider(
+                                height: 10,
+                                color: Color(0xFFF8F9FA),
+                              ),
+                              Card(
+                                color: Color.fromRGBO(79, 84, 103, 1),
+                                child: Text(" Numero dossier ",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold)),
+                              ),
+                              ListTile(
+                                minLeadingWidth: 0,
+                                tileColor: Colors.white,
+                                title: Text(
+                                  etudiant.data.numeroDossier.toString(),
+                                ),
+                              ),
+                              Divider(
+                                height: 10,
+                                color: Color(0xFFF8F9FA),
+                              ),
+                              Card(
+                                color: Color.fromRGBO(79, 84, 103, 1),
+                                child: Text(" Adresse email ",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold)),
+                              ),
+                              ListTile(
+                                minLeadingWidth: 0,
+                                tileColor: Colors.white,
+                                title: Text(
+                                  etudiant.data.user.email,
+                                ),
+                              ),
+                              Divider(
+                                height: 10,
+                                color: Color(0xFFF8F9FA),
+                              ),
+                              Card(
+                                color: Color.fromRGBO(79, 84, 103, 1),
+                                child: Text(" Date naissance ",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold)),
+                              ),
+                              ListTile(
+                                minLeadingWidth: 0,
+                                tileColor: Colors.white,
+                                title: Text(
+                                  etudiant.data.dateNaissance,
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+                              )
+                            ],
+                          ),
+                        )
+                      ]);
                     } else if (etudiant.hasError) {
                       return Outils.animationZone(
                           IconButton(
@@ -176,7 +176,6 @@ class _MonProfileState extends State<MonProfile> {
                                 Navigator.pushNamed(
                                   context,
                                   "/monprofile",
-                                  arguments: email,
                                 );
                               }),
                           "Verifiez votre connexion");
@@ -186,29 +185,7 @@ class _MonProfileState extends State<MonProfile> {
                       backgroundColor: Color.fromRGBO(79, 84, 103, 1),
                     ));
                   });
-            } else if (user.hasError) {
-              return Outils.animationZone(
-                  IconButton(
-                      icon: Icon(
-                        Icons.replay_circle_filled,
-                      ),
-                      iconSize: 60,
-                      color: Color.fromRGBO(79, 84, 103, 1),
-                      onPressed: () {
-                        Navigator.pushNamed(
-                          context,
-                          "/monprofile",
-                          arguments: email,
-                        );
-                      }),
-                  "Verifiez votre connexion");
-            }
-
-            return Outils.animationZone(LoadingBouncingGrid.square(
-              backgroundColor: Color.fromRGBO(79, 84, 103, 1),
-            ));
-          },
-        ));
+            }));
   }
 }
 
@@ -324,6 +301,9 @@ class PasswordFormState extends State<PasswordForm> {
                                   .whenComplete(() {
                                 controlCmdp.text = "";
                                 controlMdp.text = "";
+                              }).onError((error, stackTrace) {
+                                return Outils.snackbar(context,
+                                    'Erreur connexion. Veuillez verifier votre connexion');
                               });
                             } else {}
                           },

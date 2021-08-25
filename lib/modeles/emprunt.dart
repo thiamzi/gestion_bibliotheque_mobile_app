@@ -5,26 +5,23 @@ part 'serialisation/emprunt.g.dart';
 class Emprunt {
   int _numeroEmprunt;
   String _dateDebut;
-  String _delai_recup;
+  String _delaiRecup;
   String _dateFin;
   String _dateremise;
   bool _regle;
   bool _confirmer;
   int _etudiantUserIduser;
   int _livreIdlivre;
-  bool _aSupp;
 
   Emprunt(
       this._numeroEmprunt,
       this._dateDebut,
-      this._delai_recup,
+      this._delaiRecup,
       this._dateFin,
       this._regle,
       this._confirmer,
       this._etudiantUserIduser,
-      this._livreIdlivre,
-      this._dateremise,
-      this._aSupp);
+      this._livreIdlivre);
 
   get numeroEmprunt => this._numeroEmprunt;
 
@@ -34,9 +31,9 @@ class Emprunt {
 
   set dateDebut(value) => this._dateDebut = value;
 
-  get delaiRecup => this._delai_recup;
+  get delaiRecup => this._delaiRecup;
 
-  set delaiRecup(value) => this._delai_recup = value;
+  set delaiRecup(value) => this._delaiRecup = value;
 
   get dateFin => this._dateFin;
 
@@ -61,10 +58,6 @@ class Emprunt {
   get livreIdlivre => this._livreIdlivre;
 
   set livreIdlivre(value) => this._livreIdlivre = value;
-
-  get aSupp => this._aSupp;
-
-  set aSupp(value) => this._aSupp = value;
 
   factory Emprunt.fromJson(Map<String, dynamic> json) =>
       _$EmpruntFromJson(json);

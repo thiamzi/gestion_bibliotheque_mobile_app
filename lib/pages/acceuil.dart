@@ -5,6 +5,7 @@ import 'package:gestion_bibliotheque/services/apiService.dart';
 import 'package:gestion_bibliotheque/services/outils.dart';
 import 'package:loading_animations/loading_animations.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Acceuil extends StatefulWidget {
   Acceuil({Key key}) : super(key: key);
@@ -22,6 +23,16 @@ class _AceuilState extends State<Acceuil> {
   @override
   void initState() {
     super.initState();
+    _loadUserInfo();
+  }
+
+  _loadUserInfo() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List user = (prefs.getStringList('user') ?? null);
+    if (user == null) {
+      Navigator.pushNamedAndRemoveUntil(
+          context, '/connexion', ModalRoute.withName('/connexion'));
+    } else {}
   }
 
   @override
@@ -37,7 +48,7 @@ class _AceuilState extends State<Acceuil> {
           resizeToAvoidBottomInset: false,
           backgroundColor: Color(0xFFF8F9FA),
           drawer: Outils.builDrawer(context),
-          appBar: Outils.buildAppBar(Outils().buildAppBarBottom(
+          appBar: Outils.buildAppBar(Outils.buildAppBarBottom(
             arg.catgorieName,
             IconButton(
                 icon: Icon(
@@ -128,7 +139,7 @@ class _AceuilState extends State<Acceuil> {
                           iconSize: 60,
                           color: Color.fromRGBO(79, 84, 103, 1),
                           onPressed: () {
-                            Navigator.pushNamed(context, "/accueil",
+                            Navigator.pushNamed(context, "/",
                                 arguments: Arg(
                                   radioVal,
                                   arg.catgorieName,
@@ -248,7 +259,7 @@ class _AceuilState extends State<Acceuil> {
                           iconSize: 60,
                           color: Color.fromRGBO(79, 84, 103, 1),
                           onPressed: () {
-                            Navigator.pushNamed(context, "/accueil");
+                            Navigator.pushNamed(context, "/");
                           }),
                       "Verifiez votre connexion");
                 }
@@ -296,7 +307,7 @@ class MyDialogState extends State<MyDialog> {
         ),
         TextButton(
           onPressed: () {
-            Navigator.pushNamed(context, "/accueil",
+            Navigator.pushNamed(context, "/",
                 arguments: new Arg(selectedId, categorieName));
           },
           child: Text(

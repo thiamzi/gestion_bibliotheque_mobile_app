@@ -28,412 +28,397 @@ class _MesReservationsState extends State<MesReservations> {
 
   @override
   Widget build(BuildContext context) {
-    String email = ModalRoute.of(context).settings.arguments;
     return FutureBuilder<User>(
-        future: AuthService().getOneUser(email, context),
+        future: AuthService().getCurrentUser(context),
         builder: (context, user) {
-          if (user.hasData) {
-            return Outils.buildTabs(
-                context,
-                Text("En cours"),
-                Text("Historique"),
-                FutureBuilder<Reservation>(
-                    future: ApiService().getEtudiantReservationEnCours(
-                        user.data.iduser, context),
-                    builder: (context, reservationCours) {
-                      if (reservationCours.hasData) {
-                        if (reservationCours.data.numeroReservation == 0) {
-                          return Outils.noData();
-                        }
-                        return FutureBuilder<Etudiant>(
-                            future: ApiService().getOneEtudiant(
-                                reservationCours.data.etudiantUserIduser,
-                                context),
-                            builder: (context, etudiant) {
-                              if (etudiant.hasData) {
-                                return FutureBuilder<Livre>(
-                                    future: ApiService().getOneLivre(
-                                        reservationCours.data.livreIdlivre,
-                                        context),
-                                    builder: (context, livre) {
-                                      if (livre.hasData) {
-                                        return new ListView(children: [
-                                          Card(
-                                            margin: EdgeInsets.fromLTRB(
-                                                0, 10, 0, 10),
-                                            elevation: 3,
-                                            child: GestureDetector(
-                                              onTap: () {},
-                                              child: Container(
-                                                padding: EdgeInsets.fromLTRB(
-                                                    0, 10, 0, 0),
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(40),
-                                                  shape: BoxShape.rectangle,
-                                                ),
-                                                child: Column(
-                                                  children: [
-                                                    Padding(
-                                                      padding:
-                                                          EdgeInsets.fromLTRB(
-                                                              10, 0, 10, 0),
-                                                      child: ListTile(
-                                                        title: Text(
-                                                          'N° ${reservationCours.data.numeroReservation}',
-                                                          style: TextStyle(
-                                                              fontSize: 20,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold),
-                                                        ),
-                                                        subtitle: Text(
-                                                          "Debut : ${reservationCours.data.date} - Fin : ${reservationCours.data.dateFin} ",
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.red),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Image.network(
-                                                      livre.data.imageCle.url,
-                                                      fit: BoxFit.fill,
-                                                      height:
-                                                          MediaQuery.of(context)
-                                                              .size
-                                                              .width,
-                                                    ),
-                                                    Padding(
-                                                      padding:
-                                                          EdgeInsets.fromLTRB(
-                                                              10, 0, 10, 0),
-                                                      child: ListTile(
-                                                        title: Text(
-                                                            livre.data.titre),
-                                                        subtitle: Text(
-                                                            "Auteur : Mr Top"),
-                                                      ),
-                                                    ),
-                                                    Outils.divider(),
-                                                    Padding(
-                                                      padding:
-                                                          EdgeInsets.fromLTRB(
-                                                              10, 0, 10, 0),
-                                                      child: ListTile(
-                                                        title: Text(
-                                                            "${etudiant.data.prenom}  ${etudiant.data.nom}"),
-                                                        subtitle: Text(
-                                                            "Email : ${user.data.email}"),
-                                                      ),
-                                                    ),
-                                                    Outils.divider(),
-                                                    Padding(
-                                                      padding:
-                                                          EdgeInsets.fromLTRB(
-                                                              0, 30, 0, 30),
-                                                      child: ElevatedButton(
-                                                        onPressed: () {
-                                                          Outils.info(
-                                                              context,
-                                                              "Etes vous sur vouloir annuler ?",
-                                                              () => null);
-                                                        },
-                                                        child: Text(
-                                                          "Annuler",
-                                                          style: TextStyle(
-                                                              color: Color
-                                                                  .fromRGBO(
-                                                                      79,
-                                                                      84,
-                                                                      103,
-                                                                      1),
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold),
-                                                        ),
-                                                        style: ButtonStyle(
-                                                          minimumSize:
-                                                              MaterialStateProperty
-                                                                  .all<Size>(
-                                                                      Size(150,
-                                                                          50)),
-                                                          backgroundColor:
-                                                              MaterialStateProperty
-                                                                  .all<Color>(
-                                                                      Colors
-                                                                          .white),
-                                                          side: MaterialStateProperty
-                                                              .all(BorderSide(
-                                                                  color: Color
-                                                                      .fromRGBO(
-                                                                          79,
-                                                                          84,
-                                                                          103,
-                                                                          1))),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Padding(
-                                                      padding:
-                                                          EdgeInsets.fromLTRB(
-                                                              0, 0, 0, 30),
-                                                      child: ElevatedButton(
-                                                        onPressed: () {
-                                                          Outils.info(
-                                                            context,
-                                                            "Etes vous sur vouloir emprunter ?",
-                                                            () => null,
-                                                            // ApiService().emprunter(
-                                                            //   new Emprunt(
-                                                            //     Outils().genererNumero(),
-                                                            //     DateTime.now()
-                                                            //         .toString(),
-                                                            //     _delai_recup,
-                                                            //     _dateFin,
-                                                            //     false,
-                                                            //     false,
-                                                            //     etudiant.data
-                                                            //         .userIduser,
-                                                            //     livre.data
-                                                            //         .idlivre,
-                                                            //     null,
-                                                            //     false))
-                                                          );
-                                                        },
-                                                        child: Text(
-                                                          "Emprunter",
-                                                          style: TextStyle(
-                                                              color: Color
-                                                                  .fromRGBO(
-                                                                      79,
-                                                                      84,
-                                                                      103,
-                                                                      1),
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold),
-                                                        ),
-                                                        style: ButtonStyle(
-                                                          minimumSize:
-                                                              MaterialStateProperty
-                                                                  .all<Size>(
-                                                                      Size(150,
-                                                                          50)),
-                                                          backgroundColor:
-                                                              MaterialStateProperty
-                                                                  .all<Color>(
-                                                                      Colors
-                                                                          .white),
-                                                          side: MaterialStateProperty
-                                                              .all(BorderSide(
-                                                                  color: Color
-                                                                      .fromRGBO(
-                                                                          79,
-                                                                          84,
-                                                                          103,
-                                                                          1))),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ]);
-                                      } else if (livre.hasError) {
-                                        return Outils.animationZone(
-                                            IconButton(
-                                                icon: Icon(
-                                                  Icons.replay_circle_filled,
-                                                ),
-                                                iconSize: 60,
-                                                color: Color.fromRGBO(
-                                                    79, 84, 103, 1),
-                                                onPressed: () {
-                                                  Navigator.pushNamed(
-                                                    context,
-                                                    "/mesreservations",
-                                                    arguments: email,
-                                                  );
-                                                }),
-                                            "Verifiez votre connexion");
-                                      }
-
-                                      return Outils.animationZone(
-                                          LoadingBouncingGrid.square(
-                                        backgroundColor:
-                                            Color.fromRGBO(79, 84, 103, 1),
-                                      ));
-                                    });
-                              } else if (etudiant.hasError) {
-                                return Outils.animationZone(
-                                    IconButton(
-                                        icon: Icon(
-                                          Icons.replay_circle_filled,
-                                        ),
-                                        iconSize: 60,
-                                        color: Color.fromRGBO(79, 84, 103, 1),
-                                        onPressed: () {
-                                          Navigator.pushNamed(
-                                            context,
-                                            "/mesreservations",
-                                            arguments: email,
-                                          );
-                                        }),
-                                    "Verifiez votre connexion");
-                              }
-
-                              return Outils.animationZone(
-                                  LoadingBouncingGrid.square(
-                                backgroundColor: Color.fromRGBO(79, 84, 103, 1),
-                              ));
-                            });
-                      } else if (reservationCours.hasError) {
-                        return Outils.animationZone(
-                            IconButton(
-                                icon: Icon(
-                                  Icons.replay_circle_filled,
-                                ),
-                                iconSize: 60,
-                                color: Color.fromRGBO(79, 84, 103, 1),
-                                onPressed: () {
-                                  Navigator.pushNamed(
-                                    context,
-                                    "/mesreservations",
-                                    arguments: email,
-                                  );
-                                }),
-                            "Verifiez votre connexion");
-                      }
-
-                      return Outils.animationZone(LoadingBouncingGrid.square(
-                        backgroundColor: Color.fromRGBO(79, 84, 103, 1),
-                      ));
-                    }),
-                FutureBuilder<List<Reservation>>(
-                    future: ApiService()
-                        .getEtudiantReservationsList(user.data.iduser, context),
-                    builder: (context, reservationList) {
-                      if (reservationList.hasData) {
-                        if (reservationList.data[0].numeroReservation == 0) {
-                          return Outils.noData();
-                        }
-                        return new ListView.separated(
-                          padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
-                          itemCount: reservationList.data.length,
-                          separatorBuilder: (BuildContext context, int index) =>
-                              const Divider(
-                            color: Color(0xFFF8F9FA),
-                            height: 2,
-                          ),
-                          itemBuilder: (BuildContext context, int index) {
-                            return Card(
-                              margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
-                              elevation: 3,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(40),
-                                  shape: BoxShape.rectangle,
-                                ),
-                                child: Column(
-                                  children: [
-                                    Padding(
-                                      padding:
-                                          EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                      child: ListTile(
-                                        onTap: () {
-                                          Navigator.pushNamed(context,
-                                              "/detailshistoriquereservation",
-                                              arguments: reservationList
-                                                  .data[index]
-                                                  .numeroReservation);
-                                        },
-                                        title: Text(
-                                            'N° ${reservationList.data[index].numeroReservation}'),
-                                        subtitle: Text(
-                                          reservationList.data[index].date,
-                                          style: TextStyle(color: Colors.red),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        );
-                      } else if (reservationList.hasError) {
-                        return Outils.animationZone(
-                            IconButton(
-                                icon: Icon(
-                                  Icons.replay_circle_filled,
-                                ),
-                                iconSize: 60,
-                                color: Color.fromRGBO(79, 84, 103, 1),
-                                onPressed: () {
-                                  Navigator.pushNamed(
-                                    context,
-                                    "/mesreservations",
-                                    arguments: email,
-                                  );
-                                }),
-                            "Verifiez votre connexion");
-                      }
-
-                      return Outils.animationZone(LoadingBouncingGrid.square(
-                        backgroundColor: Color.fromRGBO(79, 84, 103, 1),
-                      ));
-                    }));
-          } else if (user.hasError) {
-            return Outils.buildTabs(
+          return Outils.buildTabs(
               context,
               Text("En cours"),
               Text("Historique"),
-              Outils.animationZone(
-                  IconButton(
-                      icon: Icon(
-                        Icons.replay_circle_filled,
-                      ),
-                      iconSize: 60,
-                      color: Color.fromRGBO(79, 84, 103, 1),
-                      onPressed: () {
-                        Navigator.pushNamed(
-                          context,
-                          "/mesreservations",
-                          arguments: email,
-                        );
-                      }),
-                  "Verifiez votre connexion"),
-              Outils.animationZone(
-                  IconButton(
-                      icon: Icon(
-                        Icons.replay_circle_filled,
-                      ),
-                      iconSize: 60,
-                      color: Color.fromRGBO(79, 84, 103, 1),
-                      onPressed: () {
-                        Navigator.pushNamed(
-                          context,
-                          "/mesreservations",
-                          arguments: email,
-                        );
-                      }),
-                  "Verifiez votre connexion"),
-            );
-          }
+              FutureBuilder<Reservation>(
+                  future: ApiService()
+                      .getEtudiantReservationEnCours(user.data.iduser, context),
+                  builder: (context, reservationCours) {
+                    if (reservationCours.hasData) {
+                      if (reservationCours.data.numeroReservation == 0) {
+                        return Outils.noData();
+                      }
+                      return FutureBuilder<Etudiant>(
+                          future: ApiService().getOneEtudiant(
+                              reservationCours.data.etudiantUserIduser,
+                              context),
+                          builder: (context, etudiant) {
+                            if (etudiant.hasData) {
+                              return FutureBuilder<Livre>(
+                                  future: ApiService().getOneLivre(
+                                      reservationCours.data.livreIdlivre,
+                                      context),
+                                  builder: (context, livre) {
+                                    if (livre.hasData) {
+                                      return new ListView(children: [
+                                        Card(
+                                          margin:
+                                              EdgeInsets.fromLTRB(0, 10, 0, 10),
+                                          elevation: 3,
+                                          child: GestureDetector(
+                                            onTap: () {},
+                                            child: Container(
+                                              padding: EdgeInsets.fromLTRB(
+                                                  0, 10, 0, 0),
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(40),
+                                                shape: BoxShape.rectangle,
+                                              ),
+                                              child: Column(
+                                                children: [
+                                                  Padding(
+                                                    padding:
+                                                        EdgeInsets.fromLTRB(
+                                                            10, 0, 10, 0),
+                                                    child: ListTile(
+                                                      title: Text(
+                                                        'N° ${reservationCours.data.numeroReservation}',
+                                                        style: TextStyle(
+                                                            fontSize: 20,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
+                                                      subtitle: Text(
+                                                        "Debut : ${reservationCours.data.date} - Fin : ${reservationCours.data.dateFin} ",
+                                                        style: TextStyle(
+                                                            color: Colors.red),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Image.network(
+                                                    livre.data.imageCle.url,
+                                                    fit: BoxFit.fill,
+                                                    height:
+                                                        MediaQuery.of(context)
+                                                            .size
+                                                            .width,
+                                                  ),
+                                                  Padding(
+                                                    padding:
+                                                        EdgeInsets.fromLTRB(
+                                                            10, 0, 10, 0),
+                                                    child: ListTile(
+                                                      title: Text(
+                                                          livre.data.titre),
+                                                      subtitle: Text(
+                                                          "Auteur : Mr Top"),
+                                                    ),
+                                                  ),
+                                                  Outils.divider(),
+                                                  Padding(
+                                                    padding:
+                                                        EdgeInsets.fromLTRB(
+                                                            10, 0, 10, 0),
+                                                    child: ListTile(
+                                                      title: Text(
+                                                          "${etudiant.data.prenom}  ${etudiant.data.nom}"),
+                                                      subtitle: Text(
+                                                          "N° Dossier : ${etudiant.data.numeroDossier}"),
+                                                    ),
+                                                  ),
+                                                  Outils.divider(),
+                                                  Padding(
+                                                    padding:
+                                                        EdgeInsets.fromLTRB(
+                                                            0, 30, 0, 30),
+                                                    child: ElevatedButton(
+                                                      onPressed: () {
+                                                        Outils.info(context,
+                                                            "Etes vous sur vouloir annuler ?",
+                                                            () {
+                                                          ApiService()
+                                                              .annulerReservation(
+                                                                  context,
+                                                                  reservationCours
+                                                                      .data
+                                                                      .numeroReservation)
+                                                              .whenComplete(() {
+                                                            Navigator.pushNamed(
+                                                              context,
+                                                              '/mesreservations',
+                                                            );
+                                                          }).onError((error,
+                                                                  stackTrace) {
+                                                            return Outils.snackbar(
+                                                                context,
+                                                                'Erreur connexion. Veuillez verifier votre connexion');
+                                                          });
+                                                        });
+                                                      },
+                                                      child: Text(
+                                                        "Annuler",
+                                                        style: TextStyle(
+                                                            color:
+                                                                Color.fromRGBO(
+                                                                    79,
+                                                                    84,
+                                                                    103,
+                                                                    1),
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
+                                                      style: ButtonStyle(
+                                                        minimumSize:
+                                                            MaterialStateProperty
+                                                                .all<Size>(Size(
+                                                                    150, 50)),
+                                                        backgroundColor:
+                                                            MaterialStateProperty
+                                                                .all<Color>(
+                                                                    Colors
+                                                                        .white),
+                                                        side: MaterialStateProperty
+                                                            .all(BorderSide(
+                                                                color: Color
+                                                                    .fromRGBO(
+                                                                        79,
+                                                                        84,
+                                                                        103,
+                                                                        1))),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Padding(
+                                                    padding:
+                                                        EdgeInsets.fromLTRB(
+                                                            0, 0, 0, 30),
+                                                    child: ElevatedButton(
+                                                      onPressed: () {
+                                                        Outils.info(context,
+                                                            "Etes vous sur vouloir emprunter ?",
+                                                            () {
+                                                          if (Outils.nonRegle(etudiant
+                                                                      .data
+                                                                      .empruntList
+                                                                  as List<
+                                                                      Emprunt>) ==
+                                                              false) {
+                                                            var numero = Outils
+                                                                .genererNumero();
+                                                            ApiService()
+                                                                .emprunter(
+                                                              context,
+                                                              new Emprunt(
+                                                                numero,
+                                                                null,
+                                                                null,
+                                                                null,
+                                                                false,
+                                                                false,
+                                                                user.data
+                                                                    .iduser,
+                                                                livre.data
+                                                                    .idlivre,
+                                                              ),
+                                                            )
+                                                                .whenComplete(
+                                                                    () {
+                                                              Navigator
+                                                                  .pushNamed(
+                                                                context,
+                                                                '/mesemprunts',
+                                                              );
+                                                            }).onError((error,
+                                                                    stackTrace) {
+                                                              return Outils
+                                                                  .snackbar(
+                                                                      context,
+                                                                      'Erreur connexion. Veuillez verifier votre connexion');
+                                                            });
+                                                          } else {
+                                                            Outils.erreur(
+                                                                context,
+                                                                "Erreur emprunt",
+                                                                "Vous avez deja un emprunt en cours");
+                                                          }
+                                                        });
+                                                      },
+                                                      child: Text(
+                                                        "Emprunter",
+                                                        style: TextStyle(
+                                                            color:
+                                                                Color.fromRGBO(
+                                                                    79,
+                                                                    84,
+                                                                    103,
+                                                                    1),
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
+                                                      style: ButtonStyle(
+                                                        minimumSize:
+                                                            MaterialStateProperty
+                                                                .all<Size>(Size(
+                                                                    150, 50)),
+                                                        backgroundColor:
+                                                            MaterialStateProperty
+                                                                .all<Color>(
+                                                                    Colors
+                                                                        .white),
+                                                        side: MaterialStateProperty
+                                                            .all(BorderSide(
+                                                                color: Color
+                                                                    .fromRGBO(
+                                                                        79,
+                                                                        84,
+                                                                        103,
+                                                                        1))),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ]);
+                                    } else if (livre.hasError) {
+                                      return Outils.animationZone(
+                                          IconButton(
+                                              icon: Icon(
+                                                Icons.replay_circle_filled,
+                                              ),
+                                              iconSize: 60,
+                                              color: Color.fromRGBO(
+                                                  79, 84, 103, 1),
+                                              onPressed: () {
+                                                Navigator.pushNamed(
+                                                  context,
+                                                  "/mesreservations",
+                                                );
+                                              }),
+                                          "Verifiez votre connexion");
+                                    }
 
-          return Outils.buildTabs(
-            context,
-            Text("En cours"),
-            Text("Historique"),
-            Outils.animationZone(LoadingBouncingGrid.square(
-              backgroundColor: Color.fromRGBO(79, 84, 103, 1),
-            )),
-            Outils.animationZone(LoadingBouncingGrid.square(
-              backgroundColor: Color.fromRGBO(79, 84, 103, 1),
-            )),
-          );
+                                    return Outils.animationZone(
+                                        LoadingBouncingGrid.square(
+                                      backgroundColor:
+                                          Color.fromRGBO(79, 84, 103, 1),
+                                    ));
+                                  });
+                            } else if (etudiant.hasError) {
+                              return Outils.animationZone(
+                                  IconButton(
+                                      icon: Icon(
+                                        Icons.replay_circle_filled,
+                                      ),
+                                      iconSize: 60,
+                                      color: Color.fromRGBO(79, 84, 103, 1),
+                                      onPressed: () {
+                                        Navigator.pushNamed(
+                                          context,
+                                          "/mesreservations",
+                                        );
+                                      }),
+                                  "Verifiez votre connexion");
+                            }
+
+                            return Outils.animationZone(
+                                LoadingBouncingGrid.square(
+                              backgroundColor: Color.fromRGBO(79, 84, 103, 1),
+                            ));
+                          });
+                    } else if (reservationCours.hasError) {
+                      return Outils.animationZone(
+                          IconButton(
+                              icon: Icon(
+                                Icons.replay_circle_filled,
+                              ),
+                              iconSize: 60,
+                              color: Color.fromRGBO(79, 84, 103, 1),
+                              onPressed: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  "/mesreservations",
+                                );
+                              }),
+                          "Verifiez votre connexion");
+                    }
+
+                    return Outils.animationZone(LoadingBouncingGrid.square(
+                      backgroundColor: Color.fromRGBO(79, 84, 103, 1),
+                    ));
+                  }),
+              FutureBuilder<List<Reservation>>(
+                  future: ApiService()
+                      .getEtudiantReservationsList(user.data.iduser, context),
+                  builder: (context, reservationList) {
+                    if (reservationList.hasData) {
+                      if (reservationList.data[0].numeroReservation == 0) {
+                        return Outils.noData();
+                      }
+                      return new ListView.separated(
+                        padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+                        itemCount: reservationList.data.length,
+                        separatorBuilder: (BuildContext context, int index) =>
+                            const Divider(
+                          color: Color(0xFFF8F9FA),
+                          height: 2,
+                        ),
+                        itemBuilder: (BuildContext context, int index) {
+                          return Card(
+                            margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                            elevation: 3,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(40),
+                                shape: BoxShape.rectangle,
+                              ),
+                              child: Column(
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                    child: ListTile(
+                                      onTap: () {
+                                        Navigator.pushNamed(context,
+                                            "/detailshistoriquereservation",
+                                            arguments: reservationList
+                                                .data[index].numeroReservation);
+                                      },
+                                      title: Text(
+                                          'N° ${reservationList.data[index].numeroReservation}'),
+                                      subtitle: Text(
+                                        reservationList.data[index].date,
+                                        style: TextStyle(color: Colors.red),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    } else if (reservationList.hasError) {
+                      return Outils.animationZone(
+                          IconButton(
+                              icon: Icon(
+                                Icons.replay_circle_filled,
+                              ),
+                              iconSize: 60,
+                              color: Color.fromRGBO(79, 84, 103, 1),
+                              onPressed: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  "/mesreservations",
+                                );
+                              }),
+                          "Verifiez votre connexion");
+                    }
+
+                    return Outils.animationZone(LoadingBouncingGrid.square(
+                      backgroundColor: Color.fromRGBO(79, 84, 103, 1),
+                    ));
+                  }));
         });
   }
 }

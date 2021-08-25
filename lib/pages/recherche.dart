@@ -13,13 +13,22 @@ class Recherche extends StatefulWidget {
 
 class _RechercheState extends State<Recherche> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  final searchControl = TextEditingController();
   String valueSearch;
   List<Livre> liste = [];
   List<Livre> tmp = [];
 
   @override
   void initState() {
+    liste.clear();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    searchControl.dispose();
+    super.dispose();
   }
 
   onChange(String value) {
@@ -47,10 +56,11 @@ class _RechercheState extends State<Recherche> {
         resizeToAvoidBottomInset: false,
         backgroundColor: Color(0xFFF8F9FA),
         appBar: Outils.buildAppBar(
-            Outils().buildAppBarForSearch(
+            Outils.buildAppBarForSearch(
               Padding(
                 padding: EdgeInsets.fromLTRB(0, 2, 0, 0),
                 child: TextFormField(
+                  controller: searchControl,
                   onChanged: onChange,
                   decoration: InputDecoration(
                     prefixIcon: Icon(
@@ -120,6 +130,7 @@ class _RechercheState extends State<Recherche> {
                                 padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                                 child: ListTile(
                                   onTap: () {
+                                    searchControl.text = "";
                                     Navigator.pushNamed(
                                         context, "/detailslivre",
                                         arguments: liste[index].idlivre);

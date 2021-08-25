@@ -1,6 +1,8 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:gestion_bibliotheque/pages/connexion.dart';
+import 'package:gestion_bibliotheque/modeles/user.dart';
 import 'package:gestion_bibliotheque/services/authService.dart';
 import 'package:loading_animations/loading_animations.dart';
 import 'package:cool_alert/cool_alert.dart';
@@ -44,60 +46,44 @@ class Outils {
     double m = MediaQuery.of(context).size.height;
     if (m >= 470 && m <= 500) {
       return m * 0.12;
-    }
-    if (m >= 501 && m <= 530) {
+    } else if (m >= 501 && m <= 530) {
       return m * 0.15;
-    }
-    if (m >= 531 && m <= 560) {
+    } else if (m >= 531 && m <= 560) {
       return m * 0.19;
-    }
-    if (m >= 561 && m <= 590) {
+    } else if (m >= 561 && m <= 590) {
       return m * 0.21;
-    }
-    if (m >= 591 && m <= 620) {
+    } else if (m >= 591 && m <= 620) {
       return m * 0.24;
-    }
-    if (m >= 621 && m <= 650) {
+    } else if (m >= 621 && m <= 650) {
       return m * 0.3;
-    }
-    if (m >= 651 && m <= 680) {
+    } else if (m >= 651 && m <= 680) {
       return m * 0.33;
-    }
-    if (m >= 681 && m <= 710) {
+    } else if (m >= 681 && m <= 710) {
       return m * 0.36;
-    }
-    if (m >= 711 && m <= 730) {
+    } else if (m >= 711 && m <= 730) {
       return m * 0.39;
-    }
-    if (m >= 731 && m <= 760) {
+    } else if (m >= 731 && m <= 760) {
       return m * 0.42;
-    }
-    if (m >= 761 && m <= 790) {
+    } else if (m >= 761 && m <= 790) {
       return m * 0.45;
-    }
-    if (m >= 791 && m <= 820) {
+    } else if (m >= 791 && m <= 820) {
       return m * 0.48;
-    }
-    if (m >= 821 && m <= 850) {
+    } else if (m >= 821 && m <= 850) {
       return m * 0.51;
-    }
-    if (m >= 851 && m <= 880) {
+    } else if (m >= 851 && m <= 880) {
       return m * 0.54;
-    }
-    if (m >= 881 && m <= 910) {
+    } else if (m >= 881 && m <= 910) {
       return m * 0.57;
-    }
-    if (m >= 911 && m <= 940) {
+    } else if (m >= 911 && m <= 940) {
       return m * 0.6;
-    }
-    if (m >= 941 && m <= 970) {
+    } else if (m >= 941 && m <= 970) {
       return m * 0.63;
-    }
-    if (m >= 971 && m <= 1000) {
+    } else if (m >= 971 && m <= 1000) {
       return m * 0.66;
-    }
-    if (m >= 1001) {
+    } else if (m >= 1001) {
       return m * 0.7;
+    } else {
+      return m * 0.08;
     }
   }
 
@@ -109,130 +95,139 @@ class Outils {
           decoration: BoxDecoration(
             color: Color.fromRGBO(79, 84, 103, 1),
           ),
-          child: FutureBuilder<String>(
-            future: AuthService().getUserEmail(context),
-            builder: (context, email) {
-              if (!email.hasData) {}
-              return ListView(
-                children: <Widget>[
-                  DrawerHeader(
-                      child: Column(
-                    children: <Widget>[
-                      CircleAvatar(
-                        radius: 45,
-                        backgroundImage: AssetImage(
-                          'images/person.PNG',
+          child: FutureBuilder<User>(
+            future: AuthService().getCurrentUser(context),
+            builder: (context, user) {
+              if (user.hasData) {
+                return ListView(
+                  children: <Widget>[
+                    DrawerHeader(
+                        child: Column(
+                      children: <Widget>[
+                        CircleAvatar(
+                          radius: 45,
+                          backgroundImage: AssetImage(
+                            'images/person.PNG',
+                          ),
                         ),
-                      ),
-                      Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 0)),
-                      Text(
-                        email.data,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, color: Colors.white),
-                      ),
-                    ],
-                  )),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      TextButton.icon(
-                        onPressed: () {
-                          Navigator.pushNamed(context, "/accueil");
-                        },
-                        icon: Icon(
-                          Icons.home,
-                          color: Colors.orange.shade400,
-                          size: 25,
+                        Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 0)),
+                        Text(
+                          user.data.email,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, color: Colors.white),
                         ),
-                        label: Text(
-                          "Accueil",
-                          style: TextStyle(color: Colors.white, fontSize: 15),
+                      ],
+                    )),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        TextButton.icon(
+                          onPressed: () {
+                            Navigator.pushNamed(context, "/");
+                          },
+                          icon: Icon(
+                            Icons.home,
+                            color: Color.fromRGBO(255, 145, 77, 1),
+                            size: 25,
+                          ),
+                          label: Text(
+                            "Accueil",
+                            style: TextStyle(color: Colors.white, fontSize: 15),
+                          ),
+                          style: ButtonStyle(alignment: Alignment.centerLeft),
                         ),
-                        style: ButtonStyle(alignment: Alignment.centerLeft),
-                      ),
-                      divider(),
-                      TextButton.icon(
-                        onPressed: () {
-                          Navigator.pushNamed(context, "/monprofile",
-                              arguments: email.data);
-                        },
-                        icon: Icon(
-                          Icons.person,
-                          color: Colors.orange.shade400,
-                          size: 25,
+                        divider(),
+                        TextButton.icon(
+                          onPressed: () {
+                            Navigator.pushNamed(
+                              context,
+                              "/monprofile",
+                            );
+                          },
+                          icon: Icon(
+                            Icons.person,
+                            color: Color.fromRGBO(255, 145, 77, 1),
+                            size: 25,
+                          ),
+                          label: Text(
+                            "Mon profile",
+                            style: TextStyle(color: Colors.white, fontSize: 15),
+                          ),
+                          style: ButtonStyle(alignment: Alignment.centerLeft),
                         ),
-                        label: Text(
-                          "Mon profile",
-                          style: TextStyle(color: Colors.white, fontSize: 15),
+                        divider(),
+                        TextButton.icon(
+                          onPressed: () {
+                            Navigator.pushNamed(
+                              context,
+                              "/mesemprunts",
+                            );
+                          },
+                          icon: Icon(
+                            Icons.list,
+                            color: Color.fromRGBO(255, 145, 77, 1),
+                            size: 25,
+                          ),
+                          label: Text(
+                            "Mes emprunts",
+                            style: TextStyle(color: Colors.white, fontSize: 15),
+                          ),
+                          style: ButtonStyle(alignment: Alignment.centerLeft),
                         ),
-                        style: ButtonStyle(alignment: Alignment.centerLeft),
-                      ),
-                      divider(),
-                      TextButton.icon(
-                        onPressed: () {
-                          Navigator.pushNamed(context, "/mesemprunts",
-                              arguments: email.data);
-                        },
-                        icon: Icon(
-                          Icons.list,
-                          color: Colors.orange.shade400,
-                          size: 25,
+                        divider(),
+                        TextButton.icon(
+                          onPressed: () {
+                            Navigator.pushNamed(
+                              context,
+                              "/mesreservations",
+                            );
+                          },
+                          icon: Icon(
+                            Icons.list,
+                            color: Color.fromRGBO(255, 145, 77, 1),
+                            size: 25,
+                          ),
+                          label: Text(
+                            "Mes reservations ",
+                            style: TextStyle(color: Colors.white, fontSize: 15),
+                          ),
+                          style: ButtonStyle(alignment: Alignment.centerLeft),
                         ),
-                        label: Text(
-                          "Mes emprunts",
-                          style: TextStyle(color: Colors.white, fontSize: 15),
+                        divider(),
+                      ],
+                    ),
+                    Divider(
+                      height: deconnexionPading(context),
+                      color: Color.fromRGBO(79, 84, 103, 1),
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        TextButton.icon(
+                          onPressed: () {
+                            AuthService.deconnexion(context);
+                          },
+                          icon: Icon(
+                            Icons.logout,
+                            color: Color.fromRGBO(255, 145, 77, 1),
+                            size: 25,
+                          ),
+                          label: Text(
+                            "Deconnexion",
+                            style: TextStyle(color: Colors.white, fontSize: 15),
+                          ),
+                          style: ButtonStyle(
+                            alignment: Alignment.bottomLeft,
+                          ),
                         ),
-                        style: ButtonStyle(alignment: Alignment.centerLeft),
-                      ),
-                      divider(),
-                      TextButton.icon(
-                        onPressed: () {
-                          Navigator.pushNamed(context, "/mesreservations",
-                              arguments: email.data);
-                        },
-                        icon: Icon(
-                          Icons.list,
-                          color: Colors.orange.shade400,
-                          size: 25,
-                        ),
-                        label: Text(
-                          "Mes reservations ",
-                          style: TextStyle(color: Colors.white, fontSize: 15),
-                        ),
-                        style: ButtonStyle(alignment: Alignment.centerLeft),
-                      ),
-                      divider(),
-                    ],
-                  ),
-                  Divider(
-                    height: deconnexionPading(context),
-                    color: Color.fromRGBO(79, 84, 103, 1),
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      TextButton.icon(
-                        onPressed: () {
-                          AuthService.deconnexion(context);
-                        },
-                        icon: Icon(
-                          Icons.logout,
-                          color: Colors.orange.shade400,
-                          size: 25,
-                        ),
-                        label: Text(
-                          "Deconnexion",
-                          style: TextStyle(color: Colors.white, fontSize: 15),
-                        ),
-                        style: ButtonStyle(
-                          alignment: Alignment.bottomLeft,
-                        ),
-                      ),
-                      divider(),
-                    ],
-                  )
-                ],
-              );
+                        divider(),
+                      ],
+                    )
+                  ],
+                );
+              } else {
+                return null;
+              }
             },
           )),
     );
@@ -269,7 +264,6 @@ class Outils {
                         ),
                         onPressed: () {
                           methode1();
-                          Navigator.pop(context);
                         }),
                   ),
                   SimpleDialogOption(
@@ -296,7 +290,7 @@ class Outils {
         });
   }
 
-  AppBar buildAppBarBottom(
+  static AppBar buildAppBarBottom(
       [String titre, IconButton iconb1, IconButton iconb2]) {
     return AppBar(
       elevation: 1,
@@ -316,7 +310,7 @@ class Outils {
     );
   }
 
-  SliverAppBar buildSliverBar(
+  static SliverAppBar buildSliverBar(
       [String titre, IconButton iconb1, IconButton iconb2]) {
     return SliverAppBar(
       pinned: true,
@@ -334,7 +328,7 @@ class Outils {
     );
   }
 
-  AppBar buildAppBarForSearch([Widget widget]) {
+  static AppBar buildAppBarForSearch([Widget widget]) {
     return AppBar(
         backgroundColor: Color.fromRGBO(79, 84, 103, 1),
         leading: Text(""),
@@ -413,39 +407,51 @@ class Outils {
 
   ////////////////////////////////GESTION ERREUR///////////////////////////////////////////////
 
-  static success(String message, context) {
-    Navigator.pop(context);
-    CoolAlert.show(
-      context: context,
-      backgroundColor: Color.fromRGBO(79, 84, 103, 1),
-      type: CoolAlertType.success,
-      title: 'Succes',
-      text: message,
-      confirmBtnColor: Color.fromRGBO(79, 84, 103, 1),
-      loopAnimation: true,
-    );
-  }
-
-  static errur401(context) {
+  static erreur(context, String title, String text) {
     Navigator.pop(context);
     CoolAlert.show(
       context: context,
       backgroundColor: Color.fromRGBO(79, 84, 103, 1),
       type: CoolAlertType.error,
-      title: 'Erreur authentification',
-      text: 'Email ou mot de passe incorrecte',
+      title: title,
+      text: text,
       confirmBtnColor: Color.fromRGBO(79, 84, 103, 1),
       loopAnimation: true,
     );
   }
 
-  static snackbar(context, String message) {
+  static snackbar(context, String message, [bool pop]) {
+    if (pop == null) {
+      Navigator.pop(context);
+    } else {
+      if (pop == true) {
+        Navigator.pop(context);
+      }
+    }
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       backgroundColor: Color.fromRGBO(79, 84, 103, 1),
-      duration: Duration(seconds: 10),
-      content: Text(message),
+      duration: Duration(seconds: 5),
+      content: Text(message, textAlign: TextAlign.center),
     ));
   }
 
-  int genererNumero() {}
+  static int genererNumero() {
+    List<String> table = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
+    String chaine = '';
+    for (var i = 0; i < 9; i++) {
+      var a = Random().nextInt(9);
+
+      chaine += table[a];
+    }
+    return int.parse(chaine);
+  }
+
+  static bool nonRegle(List list) {
+    for (var i = 0; i < list.length; i++) {
+      if (!list[i].regle) {
+        return true;
+      }
+    }
+    return false;
+  }
 }

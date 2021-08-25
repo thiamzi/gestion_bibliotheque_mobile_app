@@ -28,11 +28,14 @@ class AuthService {
     if (response.statusCode == ResponseStatus.RESPONSE_STATUS_200) {
       Map<String, dynamic> payload = Jwt.parseJwt(response.body);
       if (Userdetails.fromJson(payload).isEtudiant == null) {
-        return Outils.errur401(context);
+        return Outils.erreur(context, 'Erreur authentification',
+            'Email ou mot de passe incorrecte');
       }
+
       return Userdetails.fromJson(payload);
     } else if (response.statusCode == ResponseStatus.RESPONSE_STATUS_401) {
-      return Outils.errur401(context);
+      return Outils.erreur(context, 'Erreur authentification',
+          'Email ou mot de passe incorrecte');
     } else if (response.statusCode == ResponseStatus.RESPONSE_STATUS_500) {
       return Outils.snackbar(context, 'Erreur serveur. Ressayer plutard');
     } else {
@@ -50,18 +53,31 @@ class AuthService {
       if (response != null) {
         _saveAndRedirectToHome(context, response);
       }
+    }).onError((error, stackTrace) {
+      return Outils.snackbar(
+          context, 'Erreur connexion. Veuillez verifier votre connexion');
     });
   }
 
   void _saveAndRedirectToHome(context, Userdetails response) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    await prefs.setString("sub", response.sub);
-    Navigator.pushNamedAndRemoveUntil(
-      context,
-      '/accueil',
-      ModalRoute.withName('/accueil'),
-    );
+    getOneUser(response.sub, context).then((User user) async {
+      if (user != null) {
+        await prefs.setStringList("user", [
+          user.iduser.toString(),
+          user.email,
+          user.password,
+          user.role,
+        ]).whenComplete(() {
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            '/',
+            ModalRoute.withName('/'),
+          );
+        });
+      }
+    });
   }
 
   static deconnexion(context) async {
@@ -70,8 +86,8 @@ class AuthService {
 
     Navigator.pushNamedAndRemoveUntil(
       context,
-      '/',
-      ModalRoute.withName('/'),
+      '/connexion',
+      ModalRoute.withName('/connexion'),
     );
   }
 
@@ -87,16 +103,22 @@ class AuthService {
     }
   }
 
-  Future<String> getUserEmail(context) async {
+  Future<User> getCurrentUser(context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     if (prefs == null) {
       Navigator.pushNamedAndRemoveUntil(
         context,
-        '/',
-        ModalRoute.withName('/'),
+        '/connexion',
+        ModalRoute.withName('/connexion'),
       );
     }
-    return prefs.getString("sub");
+    List<String> donnees = prefs.getStringList("user");
+    if (donnees != null) {
+      return User(int.parse(donnees.elementAt(0)), donnees.elementAt(1),
+          donnees.elementAt(2), donnees.elementAt(3));
+    } else {
+      return null;
+    }
   }
 
   Future<User> upadtePassword(User user, context) async {
@@ -110,7 +132,7 @@ class AuthService {
     );
 
     if (response.statusCode == ResponseStatus.RESPONSE_STATUS_200) {
-      return Outils.success("Mot de passe modifie avec succes", context);
+      return Outils.snackbar(context, "Mot de passe modifie avec succes");
     } else if (response.statusCode == ResponseStatus.RESPONSE_STATUS_500) {
       return Outils.snackbar(context, 'Erreur serveur. Ressayer plutard');
     } else {

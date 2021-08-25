@@ -32,7 +32,7 @@ class _DetailsHistoriqueReservationState
       resizeToAvoidBottomInset: false,
       backgroundColor: Color(0xFFF8F9FA),
       appBar:
-          Outils.buildAppBar(Outils().buildAppBarBottom("Details reservation")),
+          Outils.buildAppBar(Outils.buildAppBarBottom("Details reservation")),
       body: FutureBuilder<Reservation>(
           future: ApiService().getOneReservation(numeroReservation, context),
           builder: (context, reservation) {
