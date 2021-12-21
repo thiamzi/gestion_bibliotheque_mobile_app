@@ -408,6 +408,7 @@ class Outils {
   ////////////////////////////////GESTION ERREUR///////////////////////////////////////////////
 
   static erreur(context, String title, String text) {
+    Get.back();
     CoolAlert.show(
       context: context,
       backgroundColor: Color.fromRGBO(79, 84, 103, 1),

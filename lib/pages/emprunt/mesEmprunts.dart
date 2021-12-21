@@ -19,7 +19,7 @@ class MesEmprunts extends StatefulWidget {
 
 class _MesEmpruntsState extends State<MesEmprunts> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
-  bool _loading = false;
+  bool _loadingA = false;
   @override
   void initState() {
     super.initState();
@@ -33,7 +33,7 @@ class _MesEmpruntsState extends State<MesEmprunts> {
           return Outils.buildTabs(
               context,
               Text("En cours"),
-              Text("Historique"),
+              Text("Historique emprunt"),
               FutureBuilder<Emprunt>(
                   future: ApiService()
                       .getEtudiantEmpruntEnCours(user.data.iduser, context),
@@ -146,72 +146,88 @@ class _MesEmpruntsState extends State<MesEmprunts> {
                                                   ),
                                                   Outils.divider(),
                                                   !empruntCours.data.confirmer
-                                                      ? Padding(
-                                                          padding: EdgeInsets
-                                                              .fromLTRB(
-                                                                  0, 30, 0, 30),
-                                                          child: ElevatedButton(
-                                                            onPressed: () {
-                                                              Outils.info(
-                                                                  context,
-                                                                  "Etes vous sur vouloir annuler ?",
-                                                                  () {
-                                                                ApiService()
-                                                                    .annulerEmprunt(
-                                                                        context,
-                                                                        empruntCours
-                                                                            .data
-                                                                            .numeroEmprunt)
-                                                                    .whenComplete(
-                                                                        () {
-                                                                  Navigator
-                                                                      .pushNamed(
-                                                                    context,
-                                                                    '/mesemprunts',
-                                                                  );
-                                                                }).onError((error,
-                                                                        stackTrace) {
-                                                                  return Outils
-                                                                      .snackbar(
+                                                      ? _loadingA
+                                                          ? Padding(
+                                                              padding:
+                                                                  EdgeInsets
+                                                                      .fromLTRB(
+                                                                          0,
+                                                                          30,
+                                                                          0,
+                                                                          30),
+                                                              child: CircularProgressIndicator(
+                                                                  color: Color(
+                                                                      0xFF303030)))
+                                                          : Padding(
+                                                              padding:
+                                                                  EdgeInsets
+                                                                      .fromLTRB(
+                                                                          0,
+                                                                          30,
+                                                                          0,
+                                                                          30),
+                                                              child:
+                                                                  ElevatedButton(
+                                                                onPressed: () {
+                                                                  Outils.info(
+                                                                      context,
+                                                                      "Etes vous sur vouloir annuler ?",
+                                                                      () {
+                                                                        setState(() {
+                                                                          _loadingA = true;
+                                                                        });
+                                                                    ApiService()
+                                                                        .annulerEmprunt(
+                                                                            context,
+                                                                            empruntCours
+                                                                                .data.numeroEmprunt)
+                                                                        .whenComplete(
+                                                                            () {
+                                                                      Get.appUpdate();
+                                                                    }).onError((error,
+                                                                            stackTrace) {
+                                                                      setState(() {
+                                                                        _loadingA = false;
+                                                                      });
+                                                                      return Outils.snackbar(
                                                                           context,
                                                                           'Erreur connexion. Veuillez verifier votre connexion');
-                                                                });
-                                                              });
-                                                            },
-                                                            child: Text(
-                                                              "Annuler",
-                                                              style: TextStyle(
-                                                                  color: Color
-                                                                      .fromRGBO(
-                                                                          79,
-                                                                          84,
-                                                                          103,
-                                                                          1),
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold),
-                                                            ),
-                                                            style: ButtonStyle(
-                                                              minimumSize:
-                                                                  MaterialStateProperty.all<
+                                                                    });
+                                                                  });
+                                                                },
+                                                                child: Text(
+                                                                  "Annuler",
+                                                                  style: TextStyle(
+                                                                      color: Color
+                                                                          .fromRGBO(
+                                                                              79,
+                                                                              84,
+                                                                              103,
+                                                                              1),
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold),
+                                                                ),
+                                                                style:
+                                                                    ButtonStyle(
+                                                                  minimumSize: MaterialStateProperty.all<
                                                                           Size>(
                                                                       Size(150,
                                                                           50)),
-                                                              backgroundColor:
-                                                                  MaterialStateProperty.all<
-                                                                          Color>(
-                                                                      Colors
-                                                                          .white),
-                                                              side: MaterialStateProperty
-                                                                  .all(BorderSide(
+                                                                  backgroundColor:
+                                                                      MaterialStateProperty.all<
+                                                                              Color>(
+                                                                          Colors
+                                                                              .white),
+                                                                  side: MaterialStateProperty.all(BorderSide(
                                                                       color: Color.fromRGBO(
                                                                           79,
                                                                           84,
                                                                           103,
                                                                           1))),
-                                                            ),
-                                                          ),
-                                                        )
+                                                                ),
+                                                              ),
+                                                            )
                                                       : Row()
                                                 ],
                                               ),
@@ -229,10 +245,7 @@ class _MesEmpruntsState extends State<MesEmprunts> {
                                               color: Color.fromRGBO(
                                                   79, 84, 103, 1),
                                               onPressed: () {
-                                                Navigator.pushReplacementNamed(
-                                                  context,
-                                                  "/mesemprunts",
-                                                );
+                                                Get.appUpdate();
                                               }),
                                           "Verifiez votre connexion");
                                     }
@@ -252,10 +265,7 @@ class _MesEmpruntsState extends State<MesEmprunts> {
                                       iconSize: 60,
                                       color: Color.fromRGBO(79, 84, 103, 1),
                                       onPressed: () {
-                                        Navigator.pushReplacementNamed(
-                                          context,
-                                          "/mesemprunts",
-                                        );
+                                        Get.appUpdate();
                                       }),
                                   "Verifiez votre connexion");
                             }
@@ -274,10 +284,7 @@ class _MesEmpruntsState extends State<MesEmprunts> {
                               iconSize: 60,
                               color: Color.fromRGBO(79, 84, 103, 1),
                               onPressed: () {
-                                Navigator.pushReplacementNamed(
-                                  context,
-                                  "/mesemprunts",
-                                );
+                                Get.appUpdate();
                               }),
                           "Verifiez votre connexion");
                     }
@@ -317,8 +324,7 @@ class _MesEmpruntsState extends State<MesEmprunts> {
                                     padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                                     child: ListTile(
                                       onTap: () {
-                                        Get.toNamed(
-                                            "/detailshistoriqueemprunt",
+                                        Get.toNamed("/detailshistoriqueemprunt",
                                             arguments: empruntsList
                                                 .data[index].numeroEmprunt);
                                       },

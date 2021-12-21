@@ -276,6 +276,11 @@ class _DetailsLivreState extends State<DetailsLivre> {
                                                               this._loadingE =
                                                                   false;
                                                             });
+                                                          }).onError((error, stackTrace) {
+                                                            setState(() {
+                                                              this._loadingE =
+                                                              false;
+                                                            });
                                                           });
                                                         } else {
                                                           setState(() {

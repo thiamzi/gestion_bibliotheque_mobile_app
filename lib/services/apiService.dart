@@ -233,7 +233,6 @@ class ApiService {
 
   Future annulerEmprunt(context, int numero) async {
     Navigator.pop(context);
-    Outils.loading(context);
     http.Response response = await http.delete(
       _url + "deleteemprunt/$numero",
       headers: <String, String>{
@@ -293,7 +292,6 @@ class ApiService {
 
   Future annulerReservation(context, int numero) async {
     Navigator.pop(context);
-    Outils.loading(context);
     http.Response response = await http.delete(
       _url + "deletereservation/$numero",
       headers: <String, String>{

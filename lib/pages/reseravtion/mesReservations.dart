@@ -21,6 +21,8 @@ class MesReservations extends StatefulWidget {
 
 class _MesReservationsState extends State<MesReservations> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  bool _loadingE = false;
+  bool _loadingA = false;
 
   @override
   void initState() {
@@ -35,7 +37,7 @@ class _MesReservationsState extends State<MesReservations> {
           return Outils.buildTabs(
               context,
               Text("En cours"),
-              Text("Historique"),
+              Text("Historique réservations"),
               FutureBuilder<Reservation>(
                   future: ApiService()
                       .getEtudiantReservationEnCours(user.data.iduser, context),
@@ -125,69 +127,94 @@ class _MesReservationsState extends State<MesReservations> {
                                                     ),
                                                   ),
                                                   Outils.divider(),
-                                                  Padding(
-                                                    padding:
-                                                        EdgeInsets.fromLTRB(
-                                                            0, 30, 0, 30),
-                                                    child: ElevatedButton(
-                                                      onPressed: () {
-                                                        Outils.info(context,
-                                                            "Etes vous sur vouloir annuler ?",
-                                                            () {
-                                                          ApiService()
-                                                              .annulerReservation(
+                                                  _loadingA
+                                                      ? Padding(
+                                                          padding: EdgeInsets
+                                                              .fromLTRB(
+                                                                  0, 30, 0, 30),
+                                                          child: CircularProgressIndicator(
+                                                              color: Color(
+                                                                  0xFF303030)))
+                                                      : Padding(
+                                                          padding: EdgeInsets
+                                                              .fromLTRB(
+                                                                  0, 30, 0, 30),
+                                                          child: ElevatedButton(
+                                                            onPressed: () {
+
+                                                              Outils.info(
                                                                   context,
-                                                                  reservationCours
-                                                                      .data
-                                                                      .numeroReservation)
-                                                              .whenComplete(() {
-                                                            Navigator.pushNamed(
-                                                              context,
-                                                              '/mesreservations',
-                                                            );
-                                                          }).onError((error,
-                                                                  stackTrace) {
-                                                            return Outils.snackbar(
-                                                                context,
-                                                                'Erreur connexion. Veuillez verifier votre connexion');
-                                                          });
-                                                        });
-                                                      },
-                                                      child: Text(
-                                                        "Annuler",
-                                                        style: TextStyle(
-                                                            color:
-                                                                Color.fromRGBO(
-                                                                    79,
-                                                                    84,
-                                                                    103,
-                                                                    1),
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                      ),
-                                                      style: ButtonStyle(
-                                                        minimumSize:
-                                                            MaterialStateProperty
-                                                                .all<Size>(Size(
-                                                                    150, 50)),
-                                                        backgroundColor:
-                                                            MaterialStateProperty
-                                                                .all<Color>(
-                                                                    Colors
-                                                                        .white),
-                                                        side: MaterialStateProperty
-                                                            .all(BorderSide(
-                                                                color: Color
-                                                                    .fromRGBO(
-                                                                        79,
-                                                                        84,
-                                                                        103,
-                                                                        1))),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Padding(
+                                                                  "Etes vous sur vouloir annuler ?",
+                                                                  () {
+                                                                    setState(() {
+                                                                      _loadingA =
+                                                                      true;
+                                                                    });
+                                                                ApiService()
+                                                                    .annulerReservation(
+                                                                        context,
+                                                                        reservationCours
+                                                                            .data
+                                                                            .numeroReservation)
+                                                                    .whenComplete(
+                                                                        () {
+                                                                  Get.appUpdate();
+                                                                }).onError((error,
+                                                                        stackTrace) {
+                                                                  setState(() {
+                                                                    _loadingA =
+                                                                        false;
+                                                                  });
+                                                                  return Outils
+                                                                      .snackbar(
+                                                                          context,
+                                                                          'Erreur connexion. Veuillez verifier votre connexion');
+                                                                });
+                                                              });
+                                                            },
+                                                            child: Text(
+                                                              "Annuler",
+                                                              style: TextStyle(
+                                                                  color: Color
+                                                                      .fromRGBO(
+                                                                          79,
+                                                                          84,
+                                                                          103,
+                                                                          1),
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold),
+                                                            ),
+                                                            style: ButtonStyle(
+                                                              minimumSize:
+                                                                  MaterialStateProperty.all<
+                                                                          Size>(
+                                                                      Size(150,
+                                                                          50)),
+                                                              backgroundColor:
+                                                                  MaterialStateProperty.all<
+                                                                          Color>(
+                                                                      Colors
+                                                                          .white),
+                                                              side: MaterialStateProperty
+                                                                  .all(BorderSide(
+                                                                      color: Color.fromRGBO(
+                                                                          79,
+                                                                          84,
+                                                                          103,
+                                                                          1))),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                  _loadingE
+                                                      ? Padding(
+                                                      padding: EdgeInsets
+                                                          .fromLTRB(
+                                                          0, 0, 0, 30),
+                                                      child: CircularProgressIndicator(
+                                                          color: Color(
+                                                              0xFF303030)))
+                                                      :  Padding(
                                                     padding:
                                                         EdgeInsets.fromLTRB(
                                                             0, 0, 0, 30),
@@ -196,6 +223,10 @@ class _MesReservationsState extends State<MesReservations> {
                                                         Outils.info(context,
                                                             "Etes vous sur vouloir emprunter ?",
                                                             () {
+                                                              setState(() {
+                                                                _loadingE =
+                                                                true;
+                                                              });
                                                           if (Outils.nonRegle(etudiant
                                                                       .data
                                                                       .empruntList
@@ -227,12 +258,20 @@ class _MesReservationsState extends State<MesReservations> {
                                                               );
                                                             }).onError((error,
                                                                     stackTrace) {
+                                                              setState(() {
+                                                                _loadingE =
+                                                                false;
+                                                              });
                                                               return Outils
                                                                   .snackbar(
                                                                       context,
                                                                       'Erreur connexion. Veuillez verifier votre connexion');
                                                             });
                                                           } else {
+                                                            setState(() {
+                                                              _loadingE =
+                                                              false;
+                                                            });
                                                             Outils.erreur(
                                                                 context,
                                                                 "Erreur emprunt",

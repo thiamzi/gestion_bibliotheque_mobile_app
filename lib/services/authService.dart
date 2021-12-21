@@ -44,22 +44,9 @@ class AuthService {
     }
   }
 
-  void handleSubmitted(username, password, context) async {
 
-    Userdetails response;
-    await authenticateUser(username, password, context).then((value) {
-      response = value;
-    }).whenComplete(() {
-      if (response != null) {
-        _saveAndRedirectToHome(context, response);
-      }
-    }).onError((error, stackTrace) {
-      return Outils.snackbar(
-          context, 'Erreur connexion. Veuillez verifier votre connexion');
-    });
-  }
 
-  void _saveAndRedirectToHome(context, Userdetails response) async {
+  void saveAndRedirectToHome(context, Userdetails response) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     getOneUser(response.sub, context).then((User user) async {

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:gestion_bibliotheque/modeles/userdetails.dart';
 import 'package:gestion_bibliotheque/services/authService.dart';
+import 'package:gestion_bibliotheque/services/outils.dart';
 
 class Connexion extends StatefulWidget {
   Connexion({Key key, this.title}) : super(key: key);
@@ -234,48 +236,69 @@ class ConnexionFormState extends State<ConnexionForm> {
                     ),
                   ),
                 ),
-                _loading?
-               Padding(padding: EdgeInsets.only(top: 30) , child:  CircularProgressIndicator(color: Color(0xFF303030),) ,):
-                Padding(
-                  padding: EdgeInsets.fromLTRB(0, 30, 0, 30),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      if (_formKey.currentState.validate()) {
-                        setState(() {
-                          this._loading=true;
-                        });
-                        try{
-                          AuthService().handleSubmitted(
-                              email.text, password.text, context);
-                          setState(() {
-                            this._loading=false;
-                          });
-                        }catch(err){
-                          setState(() {
-                            this._loading=false;
-                          });
-                        }
-
-                      } else {}
-                    },
-                    child: Text(
-                      "Connexion",
-                      style: TextStyle(
-                          color: Color(0xFF303030),
-                          fontWeight: FontWeight.bold),
-                    ),
-                    style: ButtonStyle(
-                      minimumSize:
-                          MaterialStateProperty.all<Size>(Size(150, 50)),
-                      backgroundColor: MaterialStateProperty.all<Color>(
-                        Color(0xFFF8F9FA),
-                      ),
-                    ),
-                  ),
-                )
+                _loading
+                    ? Padding(
+                        padding: EdgeInsets.only(top: 30),
+                        child: CircularProgressIndicator(
+                          color: Color(0xFFF8F9FA),
+                        ),
+                      )
+                    : Padding(
+                        padding: EdgeInsets.fromLTRB(0, 30, 0, 30),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            if (_formKey.currentState.validate()) {
+                              setState(() {
+                                this._loading = true;
+                              });
+                              handleSubmitted(
+                                  email.text, password.text, context);
+                            } else {}
+                          },
+                          child: Text(
+                            "Connexion",
+                            style: TextStyle(
+                                color: Color(0xFF303030),
+                                fontWeight: FontWeight.bold),
+                          ),
+                          style: ButtonStyle(
+                            minimumSize:
+                                MaterialStateProperty.all<Size>(Size(150, 50)),
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                              Color(0xFFF8F9FA),
+                            ),
+                          ),
+                        ),
+                      )
               ],
             )),
           ]),
         ));
+  }
+
+  void handleSubmitted(username, password, context) async {
+    Userdetails response;
+    setState(() {
+      this._loading=true;
+    });
+    await AuthService()
+        .authenticateUser(username, password, context)
+        .then((value) {
+      response = value;
+    }).whenComplete(() {
+      if (response != null) {
+        AuthService().saveAndRedirectToHome(context, response);
+      }else{
+        setState(() {
+          this._loading=false;
+        });
+      }
+    }).onError((error, stackTrace) {
+      setState(() {
+        this._loading=false;
+      });
+      return Outils.snackbar(
+          context, 'Erreur connexion. Veuillez verifier votre connexion');
+    });
   }
 }
