@@ -9,6 +9,7 @@ import 'package:gestion_bibliotheque/services/apiService.dart';
 import 'package:gestion_bibliotheque/services/authService.dart';
 import 'package:gestion_bibliotheque/services/outils.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:loading_animations/loading_animations.dart';
 
 class DetailsLivre extends StatefulWidget {
@@ -56,308 +57,356 @@ class _DetailsLivreState extends State<DetailsLivre> {
                     if (etudiant.hasData) {
                       return FutureBuilder<Livre>(
                           future: ApiService().getOneLivre(idLivre, context),
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              return ListView(children: [
-                                Card(
-                                  margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                                  elevation: 3,
-                                  child: Container(
-                                    padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(40),
-                                      shape: BoxShape.rectangle,
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        Padding(
-                                          padding:
-                                              EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                          child: ListTile(
-                                            title: Text(
-                                              snapshot.data.titre,
-                                              style: TextStyle(
-                                                  fontSize: 15,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            subtitle: Text("Auteur : " +
-                                                snapshot.data.auteur),
-                                          ),
-                                        ),
-                                        Image.network(
-                                          snapshot.data.imageCle.url,
-                                          fit: BoxFit.fill,
-                                          height:
-                                              MediaQuery.of(context).size.width,
-                                        ),
-                                        Padding(
-                                          padding:
-                                              EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                          child: ListTile(
-                                            title: Text(
-                                                'Categorie : Programmation'),
-                                            subtitle: Text(
-                                                "Ajoute le 12/08/2021 à 16h30mn"),
-                                          ),
-                                        ),
-                                        Outils.divider(),
-                                        Padding(
-                                          padding:
-                                              EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                          child: ListTile(
-                                            title: Text(
-                                                'Nombre de fois emprunte : ' +
-                                                    snapshot
-                                                        .data.empruntList.length
-                                                        .toString()),
-                                            subtitle: Text(
-                                                "Nonbre exemplaires : " +
-                                                    snapshot
-                                                        .data.exmplaire
-                                                        .toString() +
-                                                    " - disponibles : " +
-                                                    snapshot.data.nbdisponible
-                                                        .toString()),
-                                          ),
-                                        ),
-                                        Outils.divider(),
-                                        Padding(
-                                          padding: EdgeInsets.fromLTRB(
-                                              20, 20, 20, 20),
+                          builder: (context, livre) {
+                            if (livre.hasData) {
+                              DateTime date =
+                                  DateTime.parse(livre.data.dateCreation);
+                              return FutureBuilder<Categorie>(
+                                  future: ApiService().getOneCategorie(
+                                      livre.data.categorieIdcategorie, context),
+                                  builder: (context, categorie) {
+                                    if (categorie.hasData) {
+                                      return ListView(children: [
+                                        Card(
+                                          margin:
+                                              EdgeInsets.fromLTRB(0, 10, 0, 0),
+                                          elevation: 3,
                                           child: Container(
-                                              decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                shape: BoxShape.rectangle,
-                                              ),
-                                              child: Text(
-                                                  snapshot.data.description)),
-                                        ),
-                                        Outils.divider(),
-                                        this._loadingR
-                                            ? Padding(
-                                                padding: EdgeInsets.fromLTRB(
-                                                    0, 30, 0, 30),
-                                                child:
-                                                    CircularProgressIndicator(
-                                                  color: Color(0xFF303030),
-                                                ),
-                                              )
-                                            : Padding(
-                                                padding: EdgeInsets.fromLTRB(
-                                                    0, 30, 0, 30),
-                                                child: ElevatedButton(
-                                                  onPressed: () {
-                                                    try {
-                                                      Outils.info(context,
-                                                          "Etes vous sur vouloir reserver ?",
-                                                          () {
-                                                        if (Outils.nonRegle(etudiant
-                                                                    .data
-                                                                    .reservationList
-                                                                as List<
-                                                                    Reservation>) ==
-                                                            false) {
-                                                          setState(() {
-                                                            this._loadingR =
-                                                                true;
-                                                          });
-                                                          var numero = Outils
-                                                              .genererNumero();
-                                                          ApiService()
-                                                              .reserver(
-                                                            context,
-                                                            new Reservation(
-                                                              numero,
-                                                              null,
-                                                              null,
-                                                              false,
-                                                              user.data.iduser,
-                                                              snapshot
-                                                                  .data.idlivre,
-                                                            ),
-                                                          )
-                                                              .then((value) {
-                                                            setState(() {
-                                                              this._loadingR =
-                                                                  false;
-                                                            });
-                                                          });
-                                                        } else {
-                                                          Outils.erreur(
-                                                              context,
-                                                              "Erreur reservation",
-                                                              "Vous avez deja une reservation en cours");
-                                                        }
-                                                      });
-                                                    } catch (err) {
-                                                      setState(() {
-                                                        this._loadingR = false;
-                                                      });
-                                                      return Outils.snackbar(
-                                                          context,
-                                                          'Erreur connexion. Veuillez verifier votre connexion');
-                                                    }
-                                                  },
-                                                  child: Text(
-                                                    "Reserver",
-                                                    style: TextStyle(
-                                                        color: Color.fromRGBO(
-                                                            79, 84, 103, 1),
-                                                        fontWeight:
-                                                            FontWeight.bold),
-                                                  ),
-                                                  style: ButtonStyle(
-                                                    minimumSize:
-                                                        MaterialStateProperty
-                                                            .all<Size>(
-                                                                Size(150, 50)),
-                                                    backgroundColor:
-                                                        MaterialStateProperty
-                                                            .all<Color>(
-                                                                Colors.white),
-                                                    side: MaterialStateProperty
-                                                        .all(BorderSide(
-                                                            color:
-                                                                Color.fromRGBO(
-                                                                    79,
-                                                                    84,
-                                                                    103,
-                                                                    1))),
+                                            padding:
+                                                EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(40),
+                                              shape: BoxShape.rectangle,
+                                            ),
+                                            child: Column(
+                                              children: [
+                                                Padding(
+                                                  padding: EdgeInsets.fromLTRB(
+                                                      10, 0, 10, 0),
+                                                  child: ListTile(
+                                                    title: Text(
+                                                      livre.data.titre,
+                                                      style: TextStyle(
+                                                          fontSize: 15,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                    subtitle: Text("Auteur : " +
+                                                        livre.data.auteur),
                                                   ),
                                                 ),
-                                              ),
-                                        this._loadingE
-                                            ? Padding(
-                                                padding: EdgeInsets.fromLTRB(
-                                                    0, 0, 0, 30),
-                                                child:
-                                                    CircularProgressIndicator(
-                                                  color: Color(0xFF303030),
+                                                Image.network(
+                                                  livre.data.imageCle.url,
+                                                  fit: BoxFit.fill,
+                                                  height: MediaQuery.of(context)
+                                                      .size
+                                                      .width,
                                                 ),
-                                              )
-                                            : Padding(
-                                                padding: EdgeInsets.fromLTRB(
-                                                    0, 0, 0, 30),
-                                                child: ElevatedButton(
-                                                  onPressed: () {
-                                                    try {
-                                                      Outils.info(context,
-                                                          "Etes vous sur vouloir emprunter ?",
-                                                          () {
-                                                        if (Outils.nonRegle(etudiant
-                                                                    .data
-                                                                    .empruntList
-                                                                as List<
-                                                                    Emprunt>) ==
-                                                            false) {
-                                                          setState(() {
-                                                            this._loadingE =
-                                                                true;
-                                                          });
-                                                          var numero = Outils
-                                                              .genererNumero();
-                                                          ApiService()
-                                                              .emprunter(
-                                                            context,
-                                                            new Emprunt(
-                                                              numero,
-                                                              null,
-                                                              null,
-                                                              null,
-                                                              false,
-                                                              false,
-                                                              user.data.iduser,
-                                                              snapshot
-                                                                  .data.idlivre,
-                                                            ),
-                                                          )
-                                                              .then((value) {
-                                                            setState(() {
-                                                              this._loadingE =
-                                                                  false;
-                                                            });
-                                                          }).onError((error, stackTrace) {
-                                                            setState(() {
-                                                              this._loadingE =
-                                                              false;
-                                                            });
-                                                          });
-                                                        } else {
-                                                          setState(() {
-                                                            this._loadingE =
-                                                                false;
-                                                          });
+                                                Padding(
+                                                  padding: EdgeInsets.fromLTRB(
+                                                      10, 0, 10, 0),
+                                                  child: ListTile(
+                                                    title: Text(
+                                                        'Categorie : ${categorie.data.nom}'),
+                                                    subtitle: Text(
+                                                        "${DateFormat('dd-MM-yyyy').format(date)} à ${DateFormat('kk:mm').format(date)}"),
+                                                  ),
+                                                ),
+                                                Outils.divider(),
+                                                Padding(
+                                                  padding: EdgeInsets.fromLTRB(
+                                                      10, 0, 10, 0),
+                                                  child: ListTile(
+                                                    title: Text(
+                                                        'Nombre de fois emprunte : ' +
+                                                            livre
+                                                                .data
+                                                                .empruntList
+                                                                .length
+                                                                .toString()),
+                                                    subtitle: Text(
+                                                        "Nonbre exemplaires : " +
+                                                            livre.data.exmplaire
+                                                                .toString() +
+                                                            " - disponibles : " +
+                                                            livre.data
+                                                                .nbdisponible
+                                                                .toString()),
+                                                  ),
+                                                ),
+                                                Outils.divider(),
+                                                Padding(
+                                                  padding: EdgeInsets.fromLTRB(
+                                                      20, 20, 20, 20),
+                                                  child: Container(
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.white,
+                                                        shape:
+                                                            BoxShape.rectangle,
+                                                      ),
+                                                      child: Text(livre
+                                                          .data.description)),
+                                                ),
+                                                Outils.divider(),
+                                                this._loadingR
+                                                    ? Padding(
+                                                        padding:
+                                                            EdgeInsets.fromLTRB(
+                                                                0, 30, 0, 30),
+                                                        child:
+                                                            CircularProgressIndicator(
+                                                          color:
+                                                              Color(0xFF303030),
+                                                        ),
+                                                      )
+                                                    : Padding(
+                                                        padding:
+                                                            EdgeInsets.fromLTRB(
+                                                                0, 30, 0, 30),
+                                                        child: ElevatedButton(
+                                                          onPressed: () {
+                                                            try {
+                                                              Outils.info(
+                                                                  context,
+                                                                  "Etes vous sur vouloir reserver ?",
+                                                                  () {
+                                                                if (Outils.nonRegle(etudiant
+                                                                            .data
+                                                                            .reservationList
+                                                                        as List<
+                                                                            Reservation>) ==
+                                                                    false) {
+                                                                  setState(() {
+                                                                    this._loadingR =
+                                                                        true;
+                                                                  });
+                                                                  var numero =
+                                                                      Outils
+                                                                          .genererNumero();
+                                                                  ApiService()
+                                                                      .reserver(
+                                                                    context,
+                                                                    new Reservation(
+                                                                      numero,
+                                                                      null,
+                                                                      null,
+                                                                      false,
+                                                                      user.data
+                                                                          .iduser,
+                                                                      livre.data
+                                                                          .idlivre,
+                                                                    ),
+                                                                  )
+                                                                      .then(
+                                                                          (value) {
+                                                                    setState(
+                                                                        () {
+                                                                      this._loadingR =
+                                                                          false;
+                                                                    });
+                                                                  });
+                                                                } else {
+                                                                  Outils.erreur(
+                                                                      context,
+                                                                      "Erreur reservation",
+                                                                      "Vous avez deja une reservation en cours");
+                                                                }
+                                                              });
+                                                            } catch (err) {
+                                                              setState(() {
+                                                                this._loadingR =
+                                                                    false;
+                                                              });
+                                                              return Outils
+                                                                  .snackbar(
+                                                                      context,
+                                                                      'Erreur connexion. Veuillez verifier votre connexion');
+                                                            }
+                                                          },
+                                                          child: Text(
+                                                            "Reserver",
+                                                            style: TextStyle(
+                                                                color: Color
+                                                                    .fromRGBO(
+                                                                        79,
+                                                                        84,
+                                                                        103,
+                                                                        1),
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                          ),
+                                                          style: ButtonStyle(
+                                                            minimumSize:
+                                                                MaterialStateProperty
+                                                                    .all<Size>(
+                                                                        Size(
+                                                                            150,
+                                                                            50)),
+                                                            backgroundColor:
+                                                                MaterialStateProperty
+                                                                    .all<Color>(
+                                                                        Colors
+                                                                            .white),
+                                                            side: MaterialStateProperty
+                                                                .all(BorderSide(
+                                                                    color: Color
+                                                                        .fromRGBO(
+                                                                            79,
+                                                                            84,
+                                                                            103,
+                                                                            1))),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                this._loadingE
+                                                    ? Padding(
+                                                        padding:
+                                                            EdgeInsets.fromLTRB(
+                                                                0, 0, 0, 30),
+                                                        child:
+                                                            CircularProgressIndicator(
+                                                          color:
+                                                              Color(0xFF303030),
+                                                        ),
+                                                      )
+                                                    : Padding(
+                                                        padding:
+                                                            EdgeInsets.fromLTRB(
+                                                                0, 0, 0, 30),
+                                                        child: ElevatedButton(
+                                                          onPressed: () {
+                                                            try {
+                                                              Outils.info(
+                                                                  context,
+                                                                  "Etes vous sur vouloir emprunter ?",
+                                                                  () {
+                                                                if (Outils.nonRegle(etudiant
+                                                                            .data
+                                                                            .empruntList
+                                                                        as List<
+                                                                            Emprunt>) ==
+                                                                    false) {
+                                                                  setState(() {
+                                                                    this._loadingE =
+                                                                        true;
+                                                                  });
+                                                                  var numero =
+                                                                      Outils
+                                                                          .genererNumero();
+                                                                  ApiService()
+                                                                      .emprunter(
+                                                                    context,
+                                                                    new Emprunt(
+                                                                      numero,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      false,
+                                                                      false,
+                                                                      user.data
+                                                                          .iduser,
+                                                                      livre.data
+                                                                          .idlivre,
+                                                                    ),
+                                                                  )
+                                                                      .then(
+                                                                          (value) {
+                                                                    setState(
+                                                                        () {
+                                                                      this._loadingE =
+                                                                          false;
+                                                                    });
+                                                                  }).onError((error,
+                                                                          stackTrace) {
+                                                                    setState(
+                                                                        () {
+                                                                      this._loadingE =
+                                                                          false;
+                                                                    });
+                                                                  });
+                                                                } else {
+                                                                  setState(() {
+                                                                    this._loadingE =
+                                                                        false;
+                                                                  });
 
-                                                          Outils.erreur(
-                                                              context,
-                                                              "Erreur emprunt",
-                                                              "Vous avez deja un emprunt en cours");
-                                                        }
-                                                      });
-                                                    } catch (err) {
-                                                      setState(() {
-                                                        this._loadingE = false;
-                                                      });
-                                                      return Outils.snackbar(
-                                                          context,
-                                                          'Erreur connexion. Veuillez verifier votre connexion');
-                                                    }
-                                                  },
-                                                  child: Text(
-                                                    "Emprunter",
-                                                    style: TextStyle(
-                                                        color: Color.fromRGBO(
-                                                            79, 84, 103, 1),
-                                                        fontWeight:
-                                                            FontWeight.bold),
-                                                  ),
-                                                  style: ButtonStyle(
-                                                    minimumSize:
-                                                        MaterialStateProperty
-                                                            .all<Size>(
-                                                                Size(150, 50)),
-                                                    backgroundColor:
-                                                        MaterialStateProperty
-                                                            .all<Color>(
-                                                                Colors.white),
-                                                    side: MaterialStateProperty
-                                                        .all(BorderSide(
-                                                            color:
-                                                                Color.fromRGBO(
-                                                                    79,
-                                                                    84,
-                                                                    103,
-                                                                    1))),
-                                                  ),
+                                                                  Outils.erreur(
+                                                                      context,
+                                                                      "Erreur emprunt",
+                                                                      "Vous avez deja un emprunt en cours");
+                                                                }
+                                                              });
+                                                            } catch (err) {
+                                                              setState(() {
+                                                                this._loadingE =
+                                                                    false;
+                                                              });
+                                                              return Outils
+                                                                  .snackbar(
+                                                                      context,
+                                                                      'Erreur connexion. Veuillez verifier votre connexion');
+                                                            }
+                                                          },
+                                                          child: Text(
+                                                            "Emprunter",
+                                                            style: TextStyle(
+                                                                color: Color
+                                                                    .fromRGBO(
+                                                                        79,
+                                                                        84,
+                                                                        103,
+                                                                        1),
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                          ),
+                                                          style: ButtonStyle(
+                                                            minimumSize:
+                                                                MaterialStateProperty
+                                                                    .all<Size>(
+                                                                        Size(
+                                                                            150,
+                                                                            50)),
+                                                            backgroundColor:
+                                                                MaterialStateProperty
+                                                                    .all<Color>(
+                                                                        Colors
+                                                                            .white),
+                                                            side: MaterialStateProperty
+                                                                .all(BorderSide(
+                                                                    color: Color
+                                                                        .fromRGBO(
+                                                                            79,
+                                                                            84,
+                                                                            103,
+                                                                            1))),
+                                                          ),
+                                                        ),
+                                                      ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        Card(
+                                          margin:
+                                              EdgeInsets.fromLTRB(0, 4, 0, 5),
+                                          elevation: 2,
+                                          child: Container(
+                                            color: Colors.white,
+                                            child: ListTile(
+                                              title: Text(
+                                                'Autres livres de la meme categorie',
+                                                style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.bold,
                                                 ),
                                               ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                Card(
-                                  margin: EdgeInsets.fromLTRB(0, 4, 0, 5),
-                                  elevation: 2,
-                                  child: Container(
-                                    color: Colors.white,
-                                    child: ListTile(
-                                      title: Text(
-                                        'Autres livres de la meme categorie',
-                                        style: TextStyle(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
                                         ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                FutureBuilder<Categorie>(
-                                    future: ApiService().getOneCategorie(
-                                        snapshot.data.categorieIdcategorie,
-                                        context),
-                                    builder: (context, snapshot1) {
-                                      if (snapshot1.hasData) {
-                                        return Container(
+                                        Container(
                                             height: MediaQuery.of(context)
                                                     .size
                                                     .height *
@@ -365,7 +414,7 @@ class _DetailsLivreState extends State<DetailsLivre> {
                                             child: ListView.builder(
                                                 scrollDirection:
                                                     Axis.horizontal,
-                                                itemCount: snapshot1
+                                                itemCount: categorie
                                                     .data.livreList.length,
                                                 itemBuilder: (context, index) {
                                                   return Container(
@@ -374,14 +423,11 @@ class _DetailsLivreState extends State<DetailsLivre> {
                                                             0, 0, 0, 10),
                                                     width:
                                                         MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            0.9,
+                                                            .size
+                                                            .width,
                                                     child: Center(
                                                         child: Card(
-                                                      margin:
-                                                          EdgeInsets.fromLTRB(
-                                                              0, 0, 0, 0),
+                                                      margin: EdgeInsets.all(0),
                                                       elevation: 3,
                                                       child: GestureDetector(
                                                         onTap: () {
@@ -389,22 +435,13 @@ class _DetailsLivreState extends State<DetailsLivre> {
                                                               context,
                                                               "/detailslivre",
                                                               arguments:
-                                                                  snapshot1
+                                                                  categorie
                                                                       .data
                                                                       .livreList[
                                                                           index]
                                                                       .idlivre);
                                                         },
                                                         child: Container(
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        40),
-                                                            shape: BoxShape
-                                                                .rectangle,
-                                                          ),
                                                           child: Column(
                                                             mainAxisAlignment:
                                                                 MainAxisAlignment
@@ -412,15 +449,10 @@ class _DetailsLivreState extends State<DetailsLivre> {
                                                             children: [
                                                               Padding(
                                                                 padding:
-                                                                    EdgeInsets
-                                                                        .fromLTRB(
-                                                                            10,
-                                                                            0,
-                                                                            10,
-                                                                            0),
+                                                                    EdgeInsets.only(left: 5),
                                                                 child: ListTile(
                                                                   title: Text(
-                                                                    snapshot1
+                                                                    categorie
                                                                         .data
                                                                         .livreList[
                                                                             index]
@@ -432,46 +464,56 @@ class _DetailsLivreState extends State<DetailsLivre> {
                                                                             FontWeight.bold),
                                                                   ),
                                                                   subtitle: Text("Auteur : " +
-                                                                      snapshot1
+                                                                      categorie
                                                                           .data
                                                                           .livreList[
                                                                               index]
                                                                           .auteur),
                                                                 ),
                                                               ),
-                                                              Image.network(
-                                                                snapshot1
-                                                                    .data
-                                                                    .livreList[
-                                                                        index]
-                                                                    .imageCle
-                                                                    .url,
-                                                                fit: BoxFit
-                                                                    .contain,
-                                                                height: MediaQuery.of(
+                                                              Padding(
+                                                                padding: EdgeInsets
+                                                                    .only(
+                                                                        left:
+                                                                            20,
+                                                                        right:
+                                                                            20),
+                                                                child: Image.network(
+                                                                    categorie
+                                                                        .data
+                                                                        .livreList[
+                                                                            index]
+                                                                        .imageCle
+                                                                        .url,
+                                                                    fit: BoxFit
+                                                                        .fill,
+                                                                    height: MediaQuery.of(context)
+                                                                            .size
+                                                                            .height *
+                                                                        0.5,
+                                                                    width: MediaQuery.of(
                                                                             context)
                                                                         .size
-                                                                        .height *
-                                                                    0.5,
-                                                              ),
+                                                                        .width),
+                                                              )
                                                             ],
                                                           ),
                                                         ),
                                                       ),
                                                     )),
                                                   );
-                                                }));
-                                      } else if (snapshot1.hasError) {
-                                        return Text("");
-                                      }
-                                      return Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [],
-                                      );
-                                    })
-                              ]);
-                            } else if (snapshot.hasError) {
+                                                }))
+                                      ]);
+                                    } else if (categorie.hasError) {
+                                      return Text("");
+                                    }
+                                    return Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [],
+                                    );
+                                  });
+                            } else if (livre.hasError) {
                               return Outils.animationZone(
                                   IconButton(
                                       icon: Icon(

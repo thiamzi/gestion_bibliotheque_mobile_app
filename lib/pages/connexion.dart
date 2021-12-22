@@ -3,6 +3,7 @@ import 'package:flutter/painting.dart';
 import 'package:gestion_bibliotheque/modeles/userdetails.dart';
 import 'package:gestion_bibliotheque/services/authService.dart';
 import 'package:gestion_bibliotheque/services/outils.dart';
+import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 
 class Connexion extends StatefulWidget {
   Connexion({Key key, this.title}) : super(key: key);
@@ -21,13 +22,41 @@ class _ConnexiontState extends State<Connexion> {
     super.initState();
   }
 
+  //direct call client
+  _callNumber() async {
+    await FlutterPhoneDirectCaller.callNumber("+221771182115");
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        key: scaffoldKey,
-        resizeToAvoidBottomInset: false,
-        backgroundColor: Color(0xFFF8F9FA),
-        body: ConnexionForm());
+      key: scaffoldKey,
+      resizeToAvoidBottomInset: false,
+      backgroundColor: Color(0xFFF8F9FA),
+      body: ConnexionForm(),
+      bottomSheet: Container(
+        color: Color.fromRGBO(79, 84, 103, 1),
+        child: Container(
+            decoration: BoxDecoration(
+                color: Color.fromRGBO(255, 145, 77, 1),
+                borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(30),
+                    topLeft: Radius.circular(30))),
+            child: ListTile(
+              leading: Text(
+                "Nous contacter",
+                style: TextStyle(fontSize: 18, color: Colors.white , fontWeight: FontWeight.bold),
+              ),
+              dense: true,
+              trailing: IconButton(
+                  onPressed:() => _callNumber(),
+                  icon: Icon(
+                    Icons.call,
+                    color: Colors.white,
+                  )),
+            )),
+      ),
+    );
   }
 }
 
@@ -70,18 +99,15 @@ class ConnexionFormState extends State<ConnexionForm> {
           ),
           child: ListView(children: [
             (Column(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Padding(
                   padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
                   child: Container(
-                    width: MediaQuery.of(context).size.width * 0.9,
-                    height: 35,
+                    width: MediaQuery.of(context).size.width,
+                    height: 40,
                     decoration: BoxDecoration(
                       color: Color.fromRGBO(255, 145, 77, 1),
-                      borderRadius: BorderRadius.circular(5),
+                      borderRadius: BorderRadius.circular(10),
                     ),
                     child: Padding(
                       padding: EdgeInsets.fromLTRB(10, 0, 10, 1),
@@ -99,20 +125,16 @@ class ConnexionFormState extends State<ConnexionForm> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
-                  child: Container(
-                    padding: EdgeInsets.all(6),
-                    width: MediaQuery.of(context).size.width * 0.35,
-                    height: MediaQuery.of(context).size.width * 0.35,
-                    clipBehavior: Clip.antiAlias,
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                            color: Color.fromRGBO(255, 145, 77, 1),
-                            width: 7,
-                            style: BorderStyle.solid)),
-                    child: Image.asset(
-                      'images/profile.png',
+                  padding: EdgeInsets.fromLTRB(
+                      10, MediaQuery.of(context).size.height / 7.5, 10, 20),
+                  child: Text(
+                    'Se connecter',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontFamily: 'Poppins',
+                      color: Colors.white,
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
@@ -231,7 +253,7 @@ class ConnexionFormState extends State<ConnexionForm> {
                     'Mot de passe oublie ?',
                     style: TextStyle(
                       fontFamily: 'Poppins',
-                      color: Colors.blue,
+                      color: Colors.white,
                       fontSize: 17,
                     ),
                   ),
@@ -279,7 +301,7 @@ class ConnexionFormState extends State<ConnexionForm> {
   void handleSubmitted(username, password, context) async {
     Userdetails response;
     setState(() {
-      this._loading=true;
+      this._loading = true;
     });
     await AuthService()
         .authenticateUser(username, password, context)
@@ -288,14 +310,14 @@ class ConnexionFormState extends State<ConnexionForm> {
     }).whenComplete(() {
       if (response != null) {
         AuthService().saveAndRedirectToHome(context, response);
-      }else{
+      } else {
         setState(() {
-          this._loading=false;
+          this._loading = false;
         });
       }
     }).onError((error, stackTrace) {
       setState(() {
-        this._loading=false;
+        this._loading = false;
       });
       return Outils.snackbar(
           context, 'Erreur connexion. Veuillez verifier votre connexion');

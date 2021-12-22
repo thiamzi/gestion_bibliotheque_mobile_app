@@ -45,6 +45,7 @@ dependencies:
   flutter_riverpod: ^0.12.4
   stacked: ^2.1.9
   get: 4.1.1
+  flutter_phone_direct_caller: ^2.1.0
 
 dev_dependencies:
   flutter_test:

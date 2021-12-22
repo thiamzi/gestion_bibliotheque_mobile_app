@@ -15,19 +15,16 @@ class Outils {
       elevation: 2,
       backgroundColor: Color.fromRGBO(79, 84, 103, 1),
       title: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Image.asset(
-          "images/profile.png",
-          height: 53,
-        ),
+
       ]),
       actions: <Widget>[
-        IconButton(
-            icon: Icon(
-              Icons.info_outline,
-              size: 25,
-              color: Colors.white,
-            ),
-            onPressed: null),
+        Padding(padding: EdgeInsets.only(right: 10) , child:         Image.asset(
+          "images/profile.png",
+          height: 60,
+          width: 60,
+          fit: BoxFit.contain,
+        ),)
+
       ],
       bottom: bottom,
     );
@@ -44,7 +41,7 @@ class Outils {
   }
 
   static double BottomPading(context) {
-    double m = MediaQuery.of(context).size.height;
+    double m = MediaQuery.of(context).size.height/1.1;
     if (m >= 470 && m <= 500) {
       return m * 0.12;
     } else if (m >= 501 && m <= 530) {
@@ -104,125 +101,140 @@ class Outils {
                   children: <Widget>[
                     DrawerHeader(
                         child: Column(
-                      children: <Widget>[
-                        CircleAvatar(
-                          radius: 45,
-                          backgroundImage: AssetImage(
-                            'images/person.PNG',
+                          children: <Widget>[
+                            CircleAvatar(
+                              radius: 45,
+                              backgroundImage: AssetImage(
+                                'images/person.PNG',
+                              ),
+                            ),
+                            Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 0)),
+                            Text(
+                              user.data.email,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white),
+                            ),
+                          ],
+                        )),
+                    Container(
+                      padding: EdgeInsets.only(top: 20),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                          borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(40),
+                              topLeft: Radius.circular(40))),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          TextButton.icon(
+                            onPressed: () {
+                              Get.offNamed("/accueil");
+                            },
+                            icon: Icon(
+                              Icons.home,
+                              color: Color.fromRGBO(255, 145, 77, 1),
+                              size: 25,
+                            ),
+                            label: Text(
+                              "Accueil",
+                              style:
+                                  TextStyle(color: Color.fromRGBO(79, 84, 103, 1), fontSize: 15),
+                            ),
+                            style: ButtonStyle(alignment: Alignment.centerLeft),
                           ),
-                        ),
-                        Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 0)),
-                        Text(
-                          user.data.email,
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, color: Colors.white),
-                        ),
-                      ],
-                    )),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        TextButton.icon(
-                          onPressed: () {
-                            Get.offNamed( "/accueil");
-                          },
-                          icon: Icon(
-                            Icons.home,
-                            color: Color.fromRGBO(255, 145, 77, 1),
-                            size: 25,
+                          divider(),
+                          TextButton.icon(
+                            onPressed: () {
+                              Get.toNamed(
+                                "/monprofile",
+                              );
+                            },
+                            icon: Icon(
+                              Icons.person,
+                              color: Color.fromRGBO(255, 145, 77, 1),
+                              size: 25,
+                            ),
+                            label: Text(
+                              "Mon profile",
+                              style:
+                                  TextStyle(color: Color.fromRGBO(79, 84, 103, 1), fontSize: 15),
+                            ),
+                            style: ButtonStyle(alignment: Alignment.centerLeft),
                           ),
-                          label: Text(
-                            "Accueil",
-                            style: TextStyle(color: Colors.white, fontSize: 15),
+                          divider(),
+                          TextButton.icon(
+                            onPressed: () {
+                              Get.toNamed(
+                                "/mesemprunts",
+                              );
+                            },
+                            icon: Icon(
+                              Icons.list,
+                              color: Color.fromRGBO(255, 145, 77, 1),
+                              size: 25,
+                            ),
+                            label: Text(
+                              "Mes emprunts",
+                              style:
+                                  TextStyle(color: Color.fromRGBO(79, 84, 103, 1), fontSize: 15),
+                            ),
+                            style: ButtonStyle(alignment: Alignment.centerLeft),
                           ),
-                          style: ButtonStyle(alignment: Alignment.centerLeft),
-                        ),
-                        divider(),
-                        TextButton.icon(
-                          onPressed: () {
-                            Get.toNamed(
-                              "/monprofile",
-                            );
-                          },
-                          icon: Icon(
-                            Icons.person,
-                            color: Color.fromRGBO(255, 145, 77, 1),
-                            size: 25,
+                          divider(),
+                          TextButton.icon(
+                            onPressed: () {
+                              Get.toNamed(
+                                "/mesreservations",
+                              );
+                            },
+                            icon: Icon(
+                              Icons.list,
+                              color: Color.fromRGBO(255, 145, 77, 1),
+                              size: 25,
+                            ),
+                            label: Text(
+                              "Mes reservations ",
+                              style:
+                                  TextStyle(color: Color.fromRGBO(79, 84, 103, 1), fontSize: 15),
+                            ),
+                            style: ButtonStyle(alignment: Alignment.centerLeft),
                           ),
-                          label: Text(
-                            "Mon profile",
-                            style: TextStyle(color: Colors.white, fontSize: 15),
+                          divider(),
+                          Divider(
+                            height: BottomPading(context),
+                            color: Colors.white,
                           ),
-                          style: ButtonStyle(alignment: Alignment.centerLeft),
-                        ),
-                        divider(),
-                        TextButton.icon(
-                          onPressed: () {
-                         Get.toNamed(
-                              "/mesemprunts",
-                            );
-                          },
-                          icon: Icon(
-                            Icons.list,
-                            color: Color.fromRGBO(255, 145, 77, 1),
-                            size: 25,
-                          ),
-                          label: Text(
-                            "Mes emprunts",
-                            style: TextStyle(color: Colors.white, fontSize: 15),
-                          ),
-                          style: ButtonStyle(alignment: Alignment.centerLeft),
-                        ),
-                        divider(),
-                        TextButton.icon(
-                          onPressed: () {
-                            Get.toNamed(
-                              "/mesreservations",
-                            );
-                          },
-                          icon: Icon(
-                            Icons.list,
-                            color: Color.fromRGBO(255, 145, 77, 1),
-                            size: 25,
-                          ),
-                          label: Text(
-                            "Mes reservations ",
-                            style: TextStyle(color: Colors.white, fontSize: 15),
-                          ),
-                          style: ButtonStyle(alignment: Alignment.centerLeft),
-                        ),
-                        divider(),
-                      ],
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              TextButton.icon(
+                                onPressed: () {
+                                  info(
+                                      context,
+                                      "Voulez vous vraimment vous deconnecter ?",
+                                          () => AuthService.deconnexion(context));
+                                },
+                                icon: Icon(
+                                  Icons.logout,
+                                  color: Color.fromRGBO(255, 145, 77, 1),
+                                  size: 25,
+                                ),
+                                label: Text(
+                                  "Deconnexion",
+                                  style: TextStyle(color: Color.fromRGBO(79, 84, 103, 1), fontSize: 15),
+                                ),
+                                style: ButtonStyle(
+                                  alignment: Alignment.bottomLeft,
+                                ),
+                              ),
+                              divider(),
+                            ],
+                          )
+                        ],
+                      ),
                     ),
-                    Divider(
-                      height: BottomPading(context),
-                      color: Color.fromRGBO(79, 84, 103, 1),
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        TextButton.icon(
-                          onPressed: () {
-                            info(context,
-                                "Voulez vous vraimment vous deconnecter ?",
-                                    () => AuthService.deconnexion(context));
-                          },
-                          icon: Icon(
-                            Icons.logout,
-                            color: Color.fromRGBO(255, 145, 77, 1),
-                            size: 25,
-                          ),
-                          label: Text(
-                            "Deconnexion",
-                            style: TextStyle(color: Colors.white, fontSize: 15),
-                          ),
-                          style: ButtonStyle(
-                            alignment: Alignment.bottomLeft,
-                          ),
-                        ),
-                        divider(),
-                      ],
-                    )
+
                   ],
                 );
               } else {
@@ -422,7 +434,7 @@ class Outils {
 
   static snackbar(context, String message, [bool pop]) {
     if (pop == null) {
-    //  Navigator.pop(context);
+      //  Navigator.pop(context);
     } else {
       if (pop == true) {
         Navigator.pop(context);

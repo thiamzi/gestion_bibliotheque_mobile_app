@@ -37,7 +37,7 @@ class _MesReservationsState extends State<MesReservations> {
           return Outils.buildTabs(
               context,
               Text("En cours"),
-              Text("Historique réservations"),
+              Text("Historique réservation"),
               FutureBuilder<Reservation>(
                   future: ApiService()
                       .getEtudiantReservationEnCours(user.data.iduser, context),
